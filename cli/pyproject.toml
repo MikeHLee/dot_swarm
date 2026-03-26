@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "swarm-city"
+version = "0.1.0"
+description = "SwarmCity — markdown-native agent orchestration for multi-repo organizations"
+requires-python = ">=3.11"
+dependencies = [
+    "click>=8.1",
+]
+
+[project.scripts]
+swarm = "swarm_city.cli:cli"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-dir]
+"" = "src"
