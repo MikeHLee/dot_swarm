@@ -186,6 +186,42 @@ def done_item(paths: SwarmPaths, item_id: str, agent_id: str, note: str = "") ->
     return target
 
 
+def partial_item(paths: SwarmPaths, item_id: str, agent_id: str, note: str = "") -> WorkItem:
+    """Re-claim a CLAIMED item as PARTIAL (checkpoint without completing)."""
+    active, pending, done = read_queue(paths)
+    target = _find_item(active + pending, item_id)
+    if target is None:
+        raise ValueError(f"Item {item_id} not found in active or pending queue.")
+
+    target.state = ItemState.PARTIAL
+    target.claimed_by = agent_id
+    target.claimed_at = datetime.utcnow()
+    if note:
+        target.notes = (target.notes + " | " + note).strip(" | ")
+
+    # Ensure it stays in active
+    pending = [i for i in pending if i.id != item_id]
+    if target not in active:
+        active.append(target)
+
+    write_queue(paths, active, pending, done)
+    return target
+
+
+def block_item(paths: SwarmPaths, item_id: str, reason: str) -> WorkItem:
+    """Mark a work item as BLOCKED with a reason."""
+    active, pending, done = read_queue(paths)
+    target = _find_item(active + pending, item_id)
+    if target is None:
+        raise ValueError(f"Item {item_id} not found in active or pending queue.")
+
+    target.state = ItemState.BLOCKED
+    target.notes = f"BLOCKED: {reason}"
+
+    write_queue(paths, active, pending, done)
+    return target
+
+
 def add_item(
     paths: SwarmPaths,
     description: str,
@@ -397,6 +433,29 @@ def _division_name(paths: SwarmPaths) -> str:
 
 def _level_label(paths: SwarmPaths) -> str:
     return "Organization Level" if paths.is_org_level() else "Division Level"
+
+
+_DIVISION_CODE_MAP: dict[str, str] = {
+    "oasis-x": "ORG",
+    "oasis-cloud": "CLD",
+    "oasis-cloud-admin": "ADM",
+    "oasis-weather": "WTH",
+    "oasis-firmware": "FW",
+    "oasis-home": "HM",
+    "oasis-ui": "UI",
+    "oasis-forms": "FRM",
+    "oasis-hardware": "HW",
+    "oasis-welcome": "WEB",
+    "oasis-cloud-wiki": "WIKI",
+    "oasis-records": "REC",
+    "swarm-city": "SWC",
+}
+
+
+def _division_code_from_paths(paths: SwarmPaths) -> str:
+    """Infer division code from directory name."""
+    name = paths.root.parent.name
+    return _DIVISION_CODE_MAP.get(name, name.upper()[:4])
 
 
 def _create_state_template(paths: SwarmPaths) -> None:

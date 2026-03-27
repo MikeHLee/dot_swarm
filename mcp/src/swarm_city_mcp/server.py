@@ -38,6 +38,7 @@ from swarm_city.operations import (
     read_queue,
     read_state,
     write_state,
+    _division_code_from_paths,
 )
 
 server = Server("swarm-city")
@@ -323,8 +324,7 @@ async def call_tool(name: str, arguments: dict) -> list[types.TextContent]:
 
         elif name == "swarm_add":
             paths = _resolve_paths(path)
-            from swarm_city.operations import _division_code_from_paths  # local import
-            code = arguments.get("division_code") or _division_code_from_paths(paths)  # type: ignore
+            code = arguments.get("division_code") or _division_code_from_paths(paths)
             item = add_item(
                 paths=paths,
                 description=arguments["description"],

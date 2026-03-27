@@ -11,8 +11,9 @@ import click
 
 from .models import ItemState, Priority, SwarmPaths
 from .operations import (
-    add_item, append_memory, audit, claim_item, done_item,
-    next_item_id, read_queue, read_state, write_state,
+    add_item, append_memory, audit, block_item, claim_item, done_item,
+    next_item_id, partial_item, read_queue, read_state, write_state,
+    _division_code_from_paths,
 )
 
 
@@ -28,31 +29,6 @@ def _get_paths(path: str) -> SwarmPaths:
 
 def _default_agent() -> str:
     return os.environ.get("SWARM_AGENT_ID") or f"human-{os.environ.get('USER', 'unknown')}"
-
-
-def _division_code_from_paths(paths: SwarmPaths) -> str:
-    """Try to infer division code from context.md, fall back to uppercased dir name."""
-    if paths.context.exists():
-        for line in paths.context.read_text().splitlines():
-            if "| ORG" in line or "| CLD" in line:  # simple heuristic
-                pass  # TODO: parse the Active Divisions table
-    name = paths.root.parent.name
-    code_map = {
-        "oasis-x": "ORG",
-        "oasis-cloud": "CLD",
-        "oasis-cloud-admin": "ADM",
-        "oasis-weather": "WTH",
-        "oasis-firmware": "FW",
-        "oasis-home": "HM",
-        "oasis-ui": "UI",
-        "oasis-forms": "FRM",
-        "oasis-hardware": "HW",
-        "oasis-welcome": "WEB",
-        "oasis-cloud-wiki": "WIKI",
-        "oasis-records": "REC",
-        "swarm-city": "SWC",
-    }
-    return code_map.get(name, name.upper()[:4])
 
 
 # ---------------------------------------------------------------------------
@@ -384,6 +360,92 @@ def handoff(ctx: click.Context, fmt: str) -> None:
     ]
 
     click.echo("\n".join(lines))
+
+
+# ---------------------------------------------------------------------------
+# swarm ls
+# ---------------------------------------------------------------------------
+
+@cli.command(name="ls")
+@click.option("--section", type=click.Choice(["active", "pending", "done", "all"]),
+              default="all", help="Section to show (default: all)")
+@click.option("--priority", default=None,
+              type=click.Choice(["critical", "high", "medium", "low"]),
+              help="Filter by priority")
+@click.option("--project", default=None, help="Filter by project")
+@click.pass_context
+def ls_cmd(ctx: click.Context, section: str, priority: str | None, project: str | None) -> None:
+    """List work items from the queue."""
+    paths = _get_paths(ctx.obj["path"])
+    active, pending, done = read_queue(paths)
+
+    sections: list[tuple[str, list]] = []
+    if section in ("active", "all"):
+        sections.append(("Active", active))
+    if section in ("pending", "all"):
+        sections.append(("Pending", pending))
+    if section in ("done", "all"):
+        sections.append(("Done", done))
+
+    STATE_ICON = {
+        "OPEN": "[ ]", "CLAIMED": "[>]", "PARTIAL": "[~]",
+        "BLOCKED": "[!]", "DONE": "[x]", "CANCELLED": "[-]",
+    }
+
+    for label, items in sections:
+        filtered = items
+        if priority:
+            filtered = [i for i in filtered if i.priority.value == priority]
+        if project:
+            filtered = [i for i in filtered if i.project == project]
+        if filtered:
+            click.echo(f"\n## {label}")
+            for item in filtered:
+                icon = STATE_ICON.get(item.state.value, "[ ]")
+                pri = f"[{item.priority.value.upper()}]"
+                claim = f" ← {item.claimed_by}" if item.claimed_by else ""
+                click.echo(f"  {icon} [{item.id}] {pri} {item.description}{claim}")
+
+
+# ---------------------------------------------------------------------------
+# swarm partial
+# ---------------------------------------------------------------------------
+
+@cli.command()
+@click.argument("item_id")
+@click.option("--note", default="", help="Checkpoint note")
+@click.option("--agent", "agent_id", default=None, help="Agent ID override")
+@click.pass_context
+def partial(ctx: click.Context, item_id: str, note: str, agent_id: str | None) -> None:
+    """Mark a claimed item as partially done (checkpoint)."""
+    paths = _get_paths(ctx.obj["path"])
+    agent = agent_id or _default_agent()
+    try:
+        item = partial_item(paths, item_id, agent, note)
+    except ValueError as e:
+        click.echo(f"Error: {e}", err=True)
+        raise SystemExit(1)
+    click.echo(f"Partial [{item.id}]: {item.description} (re-claimed by {agent})")
+
+
+# ---------------------------------------------------------------------------
+# swarm block
+# ---------------------------------------------------------------------------
+
+@cli.command()
+@click.argument("item_id")
+@click.argument("reason")
+@click.pass_context
+def block(ctx: click.Context, item_id: str, reason: str) -> None:
+    """Mark a work item as blocked with a reason."""
+    paths = _get_paths(ctx.obj["path"])
+    try:
+        item = block_item(paths, item_id, reason)
+    except ValueError as e:
+        click.echo(f"Error: {e}", err=True)
+        raise SystemExit(1)
+    click.echo(f"Blocked [{item.id}]: {item.description}")
+    click.echo(f"  Reason: {reason}")
 
 
 # ---------------------------------------------------------------------------
