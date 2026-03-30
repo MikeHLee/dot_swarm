@@ -77,11 +77,16 @@ UIs, or event buses) would be "Gastown architectures." SwarmCity is the minimal 
 
 ### Organization / Division / (future: Team)
 
-```
-Organization (oasis-x/)        ← Colony — cross-product initiatives
-├── Division (oasis-cloud/)    ← Worker node — single git repo
-├── Division (oasis-firmware/) ← Worker node
-└── Division (swarm-city/)     ← Worker node
+```mermaid
+graph TD
+    Colony[Organization: oasis-x] --> Node1[Division: oasis-cloud]
+    Colony --> Node2[Division: oasis-firmware]
+    Colony --> Node3[Division: swarm-city]
+    
+    subgraph "State Layer (.swarm/)"
+      Node1 --> S1[state.md]
+      Node1 --> Q1[queue.md]
+    end
 ```
 
 There is intentionally no "team" level in Phase 0. If a product family needs its own
@@ -103,15 +108,40 @@ files). This means:
 - No central dispatcher is required
 - A new agent can orient fully from the filesystem, without talking to any service
 
+```mermaid
+sequenceDiagram
+    participant Agent A
+    participant Filesystem (.swarm/)
+    participant Agent B
+
+    Agent A->>Filesystem: Claim Item (update queue.md)
+    Agent A->>Filesystem: Set Focus (update state.md)
+    Agent A->>Agent A: Work on Task...
+    Agent A->>Filesystem: Mark Done (update queue.md)
+    Agent A->>Filesystem: Set Handoff Note (update state.md)
+    
+    Note over Agent B: Session Starts
+    Agent B->>Filesystem: Read state.md (Handoff)
+    Agent B->>Filesystem: Read queue.md (Next Item)
+```
+
 ### The Claim Pattern
 
 Work items use inline stamps rather than a separate lock database:
+
+```mermaid
+stateDiagram-v2
+    [*] --> OPEN: swarm add
+    OPEN --> CLAIMED: swarm claim
+    CLAIMED --> PARTIAL: swarm partial
+    PARTIAL --> CLAIMED: swarm claim
+    CLAIMED --> BLOCKED: swarm block
+    BLOCKED --> OPEN: swarm (manual/AI)
+    CLAIMED --> DONE: swarm done
+    DONE --> [*]
 ```
-[OPEN] → [CLAIMED · claude-code · 2026-03-26T14:30Z] → [DONE · 2026-03-26T16:45Z]
-```
-This is optimistic concurrency. Two agents claiming the same item simultaneously is rare
-in practice (one agent per division is typical). If it happens, the second claim wins and
-the first agent should check state.md before continuing.
+
+`[OPEN] → [CLAIMED · claude-code · 2026-03-26T14:30Z] → [DONE · 2026-03-26T16:45Z]`
 
 ---
 
@@ -328,8 +358,8 @@ capabilities.
 
 **Language**: Python 3.11+
 **Framework**: Click (consistent with existing oasis tooling)
-**Location**: `swarm-city/cli/`
-**Install**: `pip install -e swarm-city/cli/` or eventual `pipx install swarm-city`
+**Location**: `src/swarm_city/`
+**Install**: `pip install -e .`
 
 ### Command Reference
 
@@ -515,8 +545,8 @@ provides structured responses.
 **Language**: Python 3.11+
 **Framework**: `mcp` (Model Context Protocol Python SDK)
 **Transport**: stdio (default) or SSE
-**Location**: `swarm-city/mcp/`
-**Install**: `pip install -e swarm-city/mcp/`
+**Location**: `src/swarm_city_mcp/`
+**Install**: `pip install -e .`
 
 ### Configuration (per platform)
 
@@ -526,7 +556,7 @@ provides structured responses.
   "mcpServers": {
     "swarm-city": {
       "command": "python",
-      "args": ["-m", "swarm_city_mcp"],
+      "args": ["-m", "swarm_city_mcp.server"],
       "env": {
         "SWARM_ROOT": "/path/to/oasis-x"
       }
@@ -863,15 +893,12 @@ The `swarm init` command will eventually create this file automatically.
 - [x] Create org-level `.swarm/memory.md`
 - [x] Create `.swarm/workflows/agent-session.md`
 - [x] Create `.swarm/workflows/cross-division.md`
-- [x] Create `swarm-city/README.md` (this file)
-- [ ] Create `swarm-city/cli/` stub (pyproject.toml + click skeleton)
-- [ ] Create `swarm-city/mcp/` stub (pyproject.toml + mcp skeleton)
-- [ ] Create `swarm-city/docs/PLATFORM_SETUP.md` (shim templates)
-- [ ] Create `swarm-city/docs/CICD_WORKFLOW.md` (workflow spec)
-- [ ] Update `oasis-x/AGENTS.md` to point at `.swarm/BOOTSTRAP.md`
+- [x] Create `README.md` (root level)
+- [x] Unify `src/swarm_city` and `src/swarm_city_mcp` into single package
+- [x] Create `docs/PLATFORM_SETUP.md` (shim templates)
+- [x] Update `oasis-x/AGENTS.md` to point at `.swarm/BOOTSTRAP.md`
 
-**Handoff**: Everything in Phase 0 is markdown/config — no code yet. Any agent
-can continue this by claiming ORG-001 and creating the remaining files above.
+**Handoff**: Phase 0 scaffolding is essentially complete. The core models and file operations are implemented, and the CLI/MCP server can be installed from the root directory.
 
 ---
 
@@ -879,49 +906,40 @@ can continue this by claiming ORG-001 and creating the remaining files above.
 **Goal**: All active divisions have `.swarm/` stubs and platform shims.
 **Depends on**: Phase 0 complete
 
-- [ ] `swarm init` for: oasis-cloud, oasis-cloud-admin, oasis-weather, oasis-firmware,
+- [x] `swarm init` logic for file creation and level detection
+- [ ] Roll out to divisions: oasis-cloud, oasis-cloud-admin, oasis-weather, oasis-firmware,
       oasis-home, oasis-ui, oasis-forms, oasis-hardware, oasis-welcome
 - [ ] Populate each division's `context.md` from existing AGENTS.md content
 - [ ] Add platform shims to each division (CLAUDE.md, .windsurfrules, .cursorrules)
 - [ ] Migrate any relevant Beads issues to division queue.md files
-- [ ] Remove `.beads/` from oasis-home (JSONL backup first)
-
-**Handoff**: Run `swarm init` in each division directory once CLI is available.
-Manual creation is also fine using the template from Phase 0 files as reference.
 
 ---
 
-### Phase 2 — CLI Tool
+### Phase 2 — CLI Tool (Enhanced)
 **Goal**: `swarm` command works for all core operations.
-**Depends on**: Phase 0 complete (Phase 1 not required)
+**Status**: Mostly complete
 
-- [ ] `swarm init` (file creation, level detection)
-- [ ] `swarm status` (state summary, division sweep)
-- [ ] `swarm claim` / `swarm done` / `swarm partial` / `swarm block`
-- [ ] `swarm add` (ID auto-assignment)
-- [ ] `swarm audit` (stale claim detection, drift detection)
-- [ ] `swarm handoff` (handoff doc generation)
+- [x] `swarm status` (state summary)
+- [x] `swarm claim` / `swarm done` / `swarm partial` / `swarm block`
+- [x] `swarm add` (ID auto-assignment)
+- [x] `swarm audit` (stale claim detection, drift detection)
+- [x] `swarm handoff` (handoff doc generation)
+- [x] `swarm ai` (Natural language to swarm ops)
 - [ ] `swarm sync` (org state snapshot refresh)
-- [ ] Tests: unit tests for queue.md parsing + atomic write logic
-- [ ] Packaging: `pyproject.toml` with `pipx install` support
-- [ ] Install docs in `swarm-city/cli/README.md`
-
-**Primary implementor**: Any Python-capable agent. Pick up ORG-002.
+- [ ] Unit tests for queue.md parsing
+- [x] Unified `pyproject.toml` for easy distribution
 
 ---
 
-### Phase 3 — MCP Server
+### Phase 3 — MCP Server (Enhanced)
 **Goal**: `swarm_*` tools available in all MCP-compatible platforms.
-**Depends on**: Phase 2 (shared data model)
+**Status**: Mostly complete
 
-- [ ] MCP server scaffold with `mcp` Python SDK
-- [ ] Implement all tools from section 8
-- [ ] File locking for atomic writes
-- [ ] Platform setup docs (Claude Code, Windsurf, Cursor, Gemini, OpenCode)
-- [ ] Test with Claude Code MCP config
-- [ ] Packaging: separate `pyproject.toml` (shares `swarm_city.models` from CLI)
-
-**Primary implementor**: Any Python-capable agent. Pick up ORG-003.
+- [x] MCP server implementation using unified models/operations
+- [x] Support for all core operations: claim, done, add, state, queue, context
+- [ ] File locking for atomic writes (verify implementation)
+- [x] Platform setup docs (Claude Code, Windsurf, Cursor, Gemini, OpenCode)
+- [x] Test with Claude Code MCP config
 
 ---
 
@@ -963,33 +981,27 @@ This section is specifically for picking up SwarmCity work across sessions.
 ### The Most Important Files
 
 ```
-oasis-x/.swarm/BOOTSTRAP.md    ← protocol every agent follows
-oasis-x/.swarm/queue.md         ← what needs doing
-oasis-x/.swarm/state.md         ← where things stand right now
-oasis-x/swarm-city/README.md    ← this file (full spec)
-oasis-x/swarm-city/cli/README.md ← CLI implementation spec
-oasis-x/swarm-city/mcp/README.md ← MCP implementation spec
+oasis-x/.swarm/BOOTSTRAP.md     ← protocol every agent follows
+oasis-x/.swarm/queue.md          ← what needs doing
+oasis-x/.swarm/state.md          ← where things stand right now
+oasis-x/README.md                ← root project overview
+oasis-x/docs/ARCHITECTURE.md     ← this file (the bible)
+oasis-x/docs/PLATFORM_SETUP.md   ← platform specific shims
 ```
 
-### Implementing the CLI (Phase 2 pickup)
+### Implementing the CLI / MCP (pickup)
 
-Entry point: `swarm-city/cli/src/swarm_city/cli.py`
-Data models: `swarm-city/cli/src/swarm_city/models.py`
-File operations: `swarm-city/cli/src/swarm_city/operations.py`
+Source code lives in `src/`:
+- `src/swarm_city/cli.py`           ← Click commands
+- `src/swarm_city/models.py`        ← Shared data models
+- `src/swarm_city/operations.py`    ← Atomic file operations
+- `src/swarm_city_mcp/server.py`    ← MCP tool wrappers
 
-Start with: `swarm status`, `swarm claim`, `swarm done` — these are the most-used.
-Then: `swarm add`, `swarm audit`, `swarm handoff`.
-Leave `swarm sync` and `swarm init` for last.
+The CLI and MCP server share the same data models and operation logic. To install locally:
+`pip install -e .`
 
-### Implementing the MCP Server (Phase 3 pickup)
-
-Entry point: `swarm-city/mcp/src/swarm_city_mcp/server.py`
-Import from CLI: `from swarm_city.models import WorkItem, SwarmState`
-                 `from swarm_city.operations import read_queue, claim_item, ...`
-
-The MCP server is intentionally thin — it wraps the CLI operations and adds
-file locking. Implement `swarm_context`, `swarm_state`, `swarm_queue` first,
-then the write tools.
+To test the MCP server:
+`python -m swarm_city_mcp.server`
 
 ### Known Issues / Gotchas
 

@@ -82,17 +82,34 @@ live at org level with `refs:` pointers in each affected division's queue.
 
 ## Quick Start
 
-```bash
-# Install the CLI
-pip install -e cli/
+### 1. Install
 
+```bash
+# Clone the repository
+git clone https://github.com/oasis-x/swarm-city
+cd swarm-city
+
+# Install both CLI and MCP server
+pip install -e .
+
+# (Optional) Install AI features (for `swarm ai` and drift check)
+pip install -e ".[ai]"
+```
+
+### 2. Initialize
+
+```bash
 # Initialize in your repo
 cd your-repo
 swarm init
 
 # See current state
 swarm status
+```
 
+### 3. Coordinate
+
+```bash
 # Claim a work item before starting
 swarm claim CLD-001
 
@@ -118,7 +135,33 @@ swarm block <id>    Mark blocked with reason
 swarm audit         Check for drift: stale claims, stale state.md
 swarm handoff       Generate a handoff doc for the next session
 swarm sync          Refresh org state snapshot from all division state files
+swarm ai "<instr>"  Translate natural language to .swarm/ operations (requires AWS Bedrock)
 ```
+
+---
+
+## MCP Server
+
+The MCP server exposes all coordination operations as structured tools for agent
+platforms that support the Model Context Protocol (Claude Code, Windsurf, Cursor, etc.).
+
+### Configure in Claude Code (`~/.claude/settings.json`):
+
+```json
+{
+  "mcpServers": {
+    "swarm-city": {
+      "command": "python",
+      "args": ["-m", "swarm_city_mcp.server"],
+      "env": { "SWARM_ROOT": "/path/to/your/org-folder" }
+    }
+  }
+}
+```
+
+Available tools: `swarm_bootstrap`, `swarm_context`, `swarm_state`, `swarm_queue`,
+`swarm_claim`, `swarm_done`, `swarm_add`, `swarm_append_memory`, `swarm_audit`,
+`swarm_handoff`.
 
 ---
 
@@ -152,35 +195,6 @@ Read .swarm/BOOTSTRAP.md before starting any task and follow the SwarmCity proto
 ```
 
 Full templates in [`docs/PLATFORM_SETUP.md`](docs/PLATFORM_SETUP.md).
-
----
-
-## MCP Server
-
-The MCP server exposes all coordination operations as structured tools for agent
-platforms that support the Model Context Protocol.
-
-```bash
-pip install -e mcp/
-```
-
-Configure in Claude Code (`~/.claude/settings.json`):
-
-```json
-{
-  "mcpServers": {
-    "swarm-city": {
-      "command": "python",
-      "args": ["-m", "swarm_city_mcp"],
-      "env": { "SWARM_ROOT": "/path/to/your/org-folder" }
-    }
-  }
-}
-```
-
-Available tools: `swarm_bootstrap`, `swarm_context`, `swarm_state`, `swarm_queue`,
-`swarm_claim`, `swarm_done`, `swarm_add`, `swarm_append_memory`, `swarm_audit`,
-`swarm_handoff`.
 
 ---
 
@@ -219,19 +233,18 @@ See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) section 10 for the full workf
 ```
 swarm-city/
 ├── README.md                        # This file
-├── cli/                             # The `swarm` CLI
-│   ├── pyproject.toml
-│   └── src/swarm_city/
-│       ├── models.py                # Data models (WorkItem, SwarmPaths, etc.)
-│       ├── operations.py            # File read/write operations
-│       └── cli.py                   # Click CLI commands
-├── mcp/                             # The SwarmCity MCP server
-│   ├── pyproject.toml
-│   └── src/swarm_city_mcp/
+├── src/
+│   ├── swarm_city/                  # The `swarm` CLI logic
+│   │   ├── models.py                # Data models (WorkItem, SwarmPaths, etc.)
+│   │   ├── operations.py            # File read/write operations
+│   │   └── cli.py                   # Click CLI commands
+│   └── swarm_city_mcp/              # The SwarmCity MCP server
 │       └── server.py                # MCP server (swarm_* tools)
-└── docs/
-    ├── ARCHITECTURE.md              # Full architecture + implementation phases
-    └── PLATFORM_SETUP.md            # Agent platform shim templates
+├── docs/
+│   ├── ARCHITECTURE.md              # Full architecture + implementation phases
+│   ├── PLATFORM_SETUP.md            # Agent platform shim templates
+│   └── DRIFT_CHECK_SETUP.md         # CI/CD setup guide
+└── pyproject.toml                   # Unified build configuration
 ```
 
 ---
