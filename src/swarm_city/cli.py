@@ -366,6 +366,91 @@ def handoff(ctx: click.Context, fmt: str) -> None:
 
 
 # ---------------------------------------------------------------------------
+# swarm explore
+# ---------------------------------------------------------------------------
+
+@cli.command()
+@click.option("--depth", default=2, help="Directory depth for division discovery (default: 2)")
+@click.pass_context
+def explore(ctx: click.Context, depth: int) -> None:
+    """Show the heartbeat of all divisions in the colony.
+
+    Recursively finds .swarm/ directories starting from the current directory
+    (or --path) and displays their current focus and health.
+    """
+    root_path = Path(ctx.obj["path"]).resolve()
+    click.echo(f"\nExploring colony heartbeat in: {root_path}\n")
+
+    # Discover divisions
+    divisions: list[tuple[Path, SwarmPaths]] = []
+    
+    # 1. Check root
+    root_paths = SwarmPaths.find(root_path)
+    if root_paths:
+        divisions.append((root_path, root_paths))
+    
+    # 2. Check subdirectories up to depth
+    for p in root_path.glob("*/.swarm"):
+        div_path = p.parent
+        if div_path == root_path:
+            continue
+        paths = SwarmPaths.find(div_path)
+        if paths:
+            divisions.append((div_path, paths))
+    
+    if depth > 1:
+        for p in root_path.glob("*/*/.swarm"):
+            div_path = p.parent
+            paths = SwarmPaths.find(div_path)
+            if paths and (div_path, paths) not in divisions:
+                divisions.append((div_path, paths))
+
+    if not divisions:
+        click.echo("No .swarm/ directories found in this subtree.")
+        return
+
+    # Header
+    click.echo(f"{'Division':20} | {'Last Touched':18} | {'Current Focus'}")
+    click.echo(f"{'─' * 20}─┼─{'─' * 18}─┼─{'─' * 40}")
+
+    for path, paths in sorted(divisions, key=lambda x: x[0].name):
+        try:
+            state = read_state(paths)
+            active, pending, _ = read_queue(paths)
+            
+            # Formatting
+            name = path.name
+            if paths.is_org_level():
+                name = f"★ {name}"
+            
+            lt = state.get("Last touched", "unknown")
+            # Extract just the date/time part for brevity
+            lt_short = lt.split(" by ")[0].replace("T", " ").split(".")[0][:16]
+            
+            focus = state.get("Current focus", "(not set)")
+            if len(focus) > 50:
+                focus = focus[:47] + "..."
+            
+            # Health indicator
+            health = "✓"
+            if "**" in focus or "(not set)" in focus:
+                health = "?"
+            
+            # Add pending count
+            count = f"({len(active)} active, {len(pending)} pending)"
+            
+            click.echo(f"{name:20} | {lt_short:18} | {focus}")
+            if active or pending:
+                click.echo(f"{' ':20} | {' ':18} |   └─ {count}")
+                
+        except Exception as e:
+            click.echo(f"{path.name:20} | Error: {str(e)[:50]}")
+
+    click.echo(f"\nFound {len(divisions)} divisions.")
+    click.echo("Run 'swarm status --path <division>' for deep dive into any node.\n")
+
+
+# ---------------------------------------------------------------------------
 # swarm ls
 # ---------------------------------------------------------------------------
 
@@ -521,8 +606,9 @@ def configure() -> None:
 @click.argument("instruction")
 @click.option("--yes", "-y", is_flag=True, help="Skip confirmation and execute immediately")
 @click.option("--agent", "agent_id", default=None, help="Agent ID override")
+@click.option("--limit", "context_limit", default=1200, help="Approx token limit for context bundle (default: 1200)")
 @click.pass_context
-def ai_cmd(ctx: click.Context, instruction: str, yes: bool, agent_id: str | None) -> None:
+def ai_cmd(ctx: click.Context, instruction: str, yes: bool, agent_id: str | None, context_limit: int) -> None:
     """Translate a natural language instruction into .swarm/ operations.
 
     Examples:
@@ -546,7 +632,7 @@ def ai_cmd(ctx: click.Context, instruction: str, yes: bool, agent_id: str | None
     cfg    = _bedrock.load_config()
 
     # Build context and prompt
-    context  = _ai.build_context_bundle(paths)
+    context  = _ai.build_context_bundle(paths, context_limit=context_limit)
     user_msg = f"Instruction: {instruction}\n\n{context}"
 
     # Call Bedrock

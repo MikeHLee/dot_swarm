@@ -384,32 +384,41 @@ Commands:
   ls        List work items with optional filters
   handoff   Generate a handoff summary (current state + next ready items)
   sync      Refresh state snapshot in org state.md from all division state files
+  explore   Show the heartbeat of all divisions in the colony
+  ai        Natural language interface (configurable context limit)
   history   Show git log filtered to .swarm/ changes
 ```
 
 ### Command Specs
 
-#### `swarm init`
+#### `swarm explore`
 
 ```
-swarm init [--level org|div] [--division-code CODE] [--division-name NAME]
+swarm explore [--depth 2] [--path .]
 ```
 
-Creates `.swarm/` in the current directory with:
-- `BOOTSTRAP.md` (pointer to org BOOTSTRAP or full copy at org level)
-- `context.md` (template with placeholders)
-- `state.md` (template)
-- `queue.md` (template, first item ID auto-assigned)
-- `memory.md` (template)
+Recursively discovers all `.swarm/` directories in the subtree and displays a unified
+"Colony Heartbeat" table. This is the primary human-facing discovery tool for
+multi-repo organizations.
 
-At org level: also creates `workflows/` with standard workflow templates.
-At div level: also creates `CLAUDE.md`, `.windsurfrules`, `.cursorrules` shims
-  (only if they don't exist — never overwrites).
+Output:
+- Division name (with ★ for org level)
+- Last touched (timestamp)
+- Current focus
+- Activity summary (number of active/pending items)
 
-Detects level automatically: if `git rev-parse --git-dir` succeeds → div level.
-If cwd has sub-dirs with `.git/` → org level. Override with `--level`.
+#### `swarm ai`
 
-#### `swarm status`
+```
+swarm ai "instruction" [--limit 1200] [--yes]
+```
+
+Translates natural language into atomic `.swarm/` file operations.
+- `--limit`: Adjust the approximate token limit for the context bundle. High limits (e.g., 6000) allow the AI to see more of the queue and context, but increase cost/latency. Default is 1200.
+
+---
+
+## 8. Visualization Strategy: The Stigmergic Heartbeat
 
 ```
 swarm status [--division DIV-CODE] [--all]

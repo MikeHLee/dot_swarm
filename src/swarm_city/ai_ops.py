@@ -74,20 +74,21 @@ RULES:
 # Context bundle
 # ---------------------------------------------------------------------------
 
-def build_context_bundle(paths: SwarmPaths) -> str:
+def build_context_bundle(paths: SwarmPaths, context_limit: int = 1200) -> str:
     """Assemble minimal .swarm/ context for the AI prompt.
 
-    Target: <1200 tokens of context (state + active queue + 5 pending + context header).
+    The 'context_limit' defines the approximate target token budget for
+    the files (state + active queue + pending queue + context header).
     """
     sections: list[str] = []
 
-    # state.md — full (typically ~400 chars)
+    # state.md — typically ~400 chars
     if paths.state.exists():
         sections.append("--- STATE ---\n" + paths.state.read_text().strip())
     else:
         sections.append("--- STATE ---\n(state.md not found)")
 
-    # queue.md — active items + first 5 pending
+    # queue.md — active items + pending items up to limit
     try:
         active, pending, _ = read_queue(paths)
     except Exception:
@@ -100,15 +101,18 @@ def build_context_bundle(paths: SwarmPaths) -> str:
         sections.append("--- QUEUE (active) ---\n(none)")
 
     if pending:
-        top5 = pending[:5]
-        lines = "\n".join(item.to_line() for item in top5)
-        suffix = f"\n(+{len(pending)-5} more)" if len(pending) > 5 else ""
-        sections.append(f"--- QUEUE (pending, first {len(top5)}) ---\n{lines}{suffix}")
+        # Heuristic: 4 chars per token, reserve half for other files
+        pending_budget = max(5, context_limit // 2)
+        top_n = pending[:(pending_budget // 15)] # approx 15 tokens per line
+        lines = "\n".join(item.to_line() for item in top_n)
+        suffix = f"\n(+{len(pending)-len(top_n)} more)" if len(pending) > len(top_n) else ""
+        sections.append(f"--- QUEUE (pending, top {len(top_n)}) ---\n{lines}{suffix}")
 
-    # context.md — first 30 lines (the "what this is" section)
+    # context.md — header (charter)
     if paths.context.exists():
-        header = "\n".join(paths.context.read_text().splitlines()[:30])
-        sections.append("--- CONTEXT (header) ---\n" + header)
+        # Read first ~2000 chars or first 40 lines
+        header = "\n".join(paths.context.read_text().splitlines()[:40])
+        sections.append("--- CONTEXT (charter) ---\n" + header)
 
     return "\n\n".join(sections)
 
