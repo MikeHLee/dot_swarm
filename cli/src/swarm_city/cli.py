@@ -37,7 +37,7 @@ def _default_agent() -> str:
 
 @click.group()
 @click.option("--path", default=".", help="Path to operate on (default: cwd)")
-@click.version_option("0.1.0")
+@click.version_option("0.2.0")
 @click.pass_context
 def cli(ctx: click.Context, path: str) -> None:
     """SwarmCity — markdown-native agent orchestration.
@@ -449,6 +449,154 @@ def block(ctx: click.Context, item_id: str, reason: str) -> None:
         raise SystemExit(1)
     click.echo(f"Blocked [{item.id}]: {item.description}")
     click.echo(f"  Reason: {reason}")
+
+
+# ---------------------------------------------------------------------------
+# swarm configure
+# ---------------------------------------------------------------------------
+
+@cli.command()
+def configure() -> None:
+    """Interactive wizard: set Bedrock model + region, test connectivity.
+
+    Credentials are NEVER stored here. boto3 reads them from the standard
+    AWS credential chain: env vars → ~/.aws/credentials → IAM role.
+
+    Run 'aws configure' or set AWS_ACCESS_KEY_ID + AWS_SECRET_ACCESS_KEY
+    in your environment before running this.
+    """
+    try:
+        import boto3  # noqa: F401  (just checking it's available)
+    except ImportError:
+        click.echo("Error: boto3 not installed. Run: pip install 'swarm-city[ai]'", err=True)
+        raise SystemExit(1)
+
+    from . import bedrock as _bedrock
+
+    cfg = _bedrock.load_config()
+
+    click.echo("SwarmCity Bedrock configuration\n")
+    click.echo("Credentials: boto3 credential chain")
+    click.echo("  (env vars → ~/.aws/credentials → IAM role — never stored here)\n")
+
+    model  = click.prompt("  Bedrock model",  default=cfg["model"])
+    region = click.prompt("  AWS region",     default=cfg["region"])
+
+    if click.confirm("\n  Test connectivity now?", default=True):
+        click.echo("  Connecting...", nl=False)
+        try:
+            client = _bedrock.get_bedrock_client(region)
+            ok, msg = _bedrock.test_connectivity(client, model)
+        except Exception as e:
+            ok, msg = False, str(e)
+
+        if ok:
+            click.echo(" ✓ OK")
+        else:
+            click.echo(f" ✗\n")
+            if "NoCredentialsError" in msg or "CredentialRetrievalError" in msg:
+                click.echo("  No AWS credentials found. Options:")
+                click.echo("    aws configure                          (interactive)")
+                click.echo("    export AWS_ACCESS_KEY_ID=...           (env var)")
+                click.echo("    export AWS_SECRET_ACCESS_KEY=...")
+            elif "AccessDeniedException" in msg or "AuthorizationError" in msg:
+                click.echo("  Access denied. Check two things:")
+                click.echo("    1. IAM policy: add bedrock:InvokeModel on the model ARN")
+                click.echo("    2. Bedrock model access: AWS Console → Bedrock → Model access")
+            elif "EndpointResolution" in msg or "Connection" in msg:
+                click.echo(f"  Connection failed — is region '{region}' correct?")
+            else:
+                click.echo(f"  Error: {msg[:200]}")
+
+    _bedrock.save_config(model, region)
+    click.echo(f"\n  Config saved to {_bedrock.CONFIG_PATH}")
+    click.echo("  Run 'swarm ai \"what should I work on next?\"' to try it out.")
+
+
+# ---------------------------------------------------------------------------
+# swarm ai
+# ---------------------------------------------------------------------------
+
+@cli.command(name="ai")
+@click.argument("instruction")
+@click.option("--yes", "-y", is_flag=True, help="Skip confirmation and execute immediately")
+@click.option("--agent", "agent_id", default=None, help="Agent ID override")
+@click.pass_context
+def ai_cmd(ctx: click.Context, instruction: str, yes: bool, agent_id: str | None) -> None:
+    """Translate a natural language instruction into .swarm/ operations.
+
+    Examples:
+      swarm ai "mark ORG-009 as done, blog service is fixed"
+      swarm ai "add three items for OAuth2: discovery, token exchange, refresh"
+      swarm ai "what should I work on next?"
+      swarm ai "write a memory entry: chose NATS over Kafka for native async"
+      swarm ai "update my focus to the markets ASGI fix" --yes
+    """
+    try:
+        import boto3  # noqa: F401
+    except ImportError:
+        click.echo("Error: boto3 not installed. Run: pip install 'swarm-city[ai]'", err=True)
+        raise SystemExit(1)
+
+    from . import bedrock as _bedrock
+    from . import ai_ops as _ai
+
+    paths  = _get_paths(ctx.obj["path"])
+    agent  = agent_id or _default_agent()
+    cfg    = _bedrock.load_config()
+
+    # Build context and prompt
+    context  = _ai.build_context_bundle(paths)
+    user_msg = f"Instruction: {instruction}\n\n{context}"
+
+    # Call Bedrock
+    try:
+        client = _bedrock.get_bedrock_client(cfg["region"])
+        result = _ai.invoke_ai(client, cfg["model"], user_msg)
+    except ImportError:
+        click.echo("Error: boto3 not installed. Run: pip install 'swarm-city[ai]'", err=True)
+        raise SystemExit(1)
+    except Exception as e:
+        kind = type(e).__name__
+        if "NoCredentials" in kind or "CredentialRetrieval" in kind:
+            click.echo("Error: No AWS credentials. Run 'swarm configure' or set AWS_* env vars.", err=True)
+        elif "AccessDenied" in str(e) or "Authorization" in str(e):
+            click.echo("Error: Bedrock access denied. Run 'swarm configure' to troubleshoot.", err=True)
+        else:
+            click.echo(f"Error: {kind}: {e}", err=True)
+        raise SystemExit(1)
+
+    commentary = result.get("commentary", "")
+    ops        = result.get("operations", [])
+
+    if not ops:
+        click.echo(f"\n{commentary}")
+        return
+
+    # Separate respond ops (informational) from file-write ops
+    respond_ops = [o for o in ops if o.get("op") == "respond"]
+    write_ops   = [o for o in ops if o.get("op") != "respond"]
+
+    # Always print respond messages immediately
+    for op in respond_ops:
+        click.echo(f"\n{op['message']}")
+
+    if not write_ops:
+        return
+
+    # Preview write ops and confirm
+    click.echo("\n" + _ai.format_preview(commentary, write_ops))
+
+    if not yes:
+        click.echo()
+        if not click.confirm("  Execute these operations?", default=False):
+            click.echo("  Aborted.")
+            return
+
+    click.echo()
+    results = _ai.execute_operations(paths, write_ops, agent)
+    for r in results:
+        click.echo(r)
 
 
 # ---------------------------------------------------------------------------

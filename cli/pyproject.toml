@@ -4,11 +4,16 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "swarm-city"
-version = "0.1.0"
+version = "0.2.0"
 description = "SwarmCity — markdown-native agent orchestration for multi-repo organizations"
 requires-python = ">=3.11"
 dependencies = [
     "click>=8.1",
+]
+
+[project.optional-dependencies]
+ai = [
+    "boto3>=1.34",
 ]
 
 [project.scripts]
