@@ -870,3 +870,6 @@ def _create_platform_shims(repo_root: Path) -> None:
     for filename, content in shims.items():
         path = repo_root / filename
         _create_if_missing(path, content)
+
+if __name__ == "__main__":
+    cli(obj={})
