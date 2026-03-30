@@ -151,7 +151,7 @@ jobs:
           GITHUB_EVENT_NAME: ${{ github.event_name }}
         run: |
           python3 - << 'PYEOF'
-          import json, os, subprocess, sys, tempfile
+          import json, os, subprocess, sys, tempfile, textwrap
           from pathlib import Path
 
           model  = os.environ["SWARM_BEDROCK_MODEL"]
@@ -164,40 +164,43 @@ jobs:
           state_md     = Path("/tmp/swarm/state.txt").read_text().strip()
           queue_active = Path("/tmp/swarm/queue_active.txt").read_text().strip()
 
-          prompt = f"""\
-You are a SwarmCity drift auditor. SwarmCity uses `.swarm/state.md` and `.swarm/queue.md` \
-to coordinate AI agents and developers across repos. A "merge" just landed on `{branch}` in `{repo}`.
+          prompt = textwrap.dedent(f"""
+              You are a SwarmCity drift auditor. SwarmCity uses `.swarm/state.md` and
+              `.swarm/queue.md` to coordinate AI agents and developers across repos.
+              A "merge" just landed on `{branch}` in `{repo}`.
 
-Your job: identify any drift between the code changes and the coordination docs. Be concise.
+              Your job: identify any drift between the code changes and the coordination
+              docs. Be concise.
 
-## Diff stat
-```
-{stat}
-```
+              ## Diff stat
+              ```
+              {stat}
+              ```
 
-## Source file diffs (top changed files, truncated)
-{diff_content}
+              ## Source file diffs (top changed files, truncated)
+              {diff_content}
 
-## .swarm/state.md (current)
-```
-{state_md}
-```
+              ## .swarm/state.md (current)
+              ```
+              {state_md}
+              ```
 
-## .swarm/queue.md — Active section
-```
-{queue_active}
-```
+              ## .swarm/queue.md — Active section
+              ```
+              {queue_active}
+              ```
 
-## Your assessment
+              ## Your assessment
 
-Check these four things only:
-1. **State sync** — Does `state.md` "Current focus" match what was just merged?
-2. **Queue sync** — Should any active/pending items be marked DONE or CLAIMED based on these changes?
-3. **Missing items** — Any TODOs or incomplete work visible in the diff that should be queued?
-4. **Memory gap** — Any non-obvious architectural decision in this diff that warrants a `memory.md` entry?
+              Check these four things only:
+              1. **State sync** — Does `state.md` "Current focus" match what was just merged?
+              2. **Queue sync** — Should any active/pending items be marked DONE or CLAIMED?
+              3. **Missing items** — Any TODOs or incomplete work in the diff that should be queued?
+              4. **Memory gap** — Any non-obvious architectural decision warranting a `memory.md` entry?
 
-Respond in GitHub-flavored markdown. Reference specific file names and queue IDs.
-If everything looks good, say so in one sentence. Max 250 words."""
+              Respond in GitHub-flavored markdown. Reference specific file names and queue IDs.
+              If everything looks good, say so in one sentence. Max 250 words.
+          """).strip()
 
           payload = {
               "anthropic_version": "bedrock-2023-05-31",
