@@ -165,6 +165,19 @@ class SwarmPaths:
     workflows: Path
 
     @classmethod
+    def from_swarm_dir(cls, swarm: Path) -> "SwarmPaths":
+        """Construct SwarmPaths directly from a .swarm/ directory path."""
+        return cls(
+            root=swarm,
+            bootstrap=swarm / "BOOTSTRAP.md",
+            context=swarm / "context.md",
+            state=swarm / "state.md",
+            queue=swarm / "queue.md",
+            memory=swarm / "memory.md",
+            workflows=swarm / "workflows",
+        )
+
+    @classmethod
     def find(cls, start: Path | str = ".") -> "SwarmPaths | None":
         """Walk up from start until .swarm/ is found (max 5 levels)."""
         p = Path(start).resolve()

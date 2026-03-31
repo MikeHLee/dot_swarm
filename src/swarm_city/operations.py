@@ -73,16 +73,16 @@ def _parse_items(section_text: str) -> list[WorkItem]:
         elif current_item and (fm := FIELD_RE.match(line)):
             key, value = fm.group("key"), fm.group("value").strip()
             if key == "priority":
-                # priority: high | project: cloud-stability
+                # value format: "high | project: cloud-stability"
                 for part in value.split("|"):
                     part = part.strip()
-                    if part.startswith("priority:"):
+                    if part.startswith("project:"):
+                        current_item.project = part.split(":", 1)[1].strip()
+                    else:
                         try:
-                            current_item.priority = Priority(part.split(":", 1)[1].strip())
+                            current_item.priority = Priority(part)
                         except ValueError:
                             pass
-                    elif part.startswith("project:"):
-                        current_item.project = part.split(":", 1)[1].strip()
             elif key == "notes":
                 current_item.notes = value
             elif key == "depends":
@@ -225,7 +225,7 @@ def block_item(paths: SwarmPaths, item_id: str, reason: str) -> WorkItem:
 def add_item(
     paths: SwarmPaths,
     description: str,
-    division_code: str,
+    division_code: str | None = None,
     priority: Priority = Priority.MEDIUM,
     project: str = "misc",
     notes: str = "",
@@ -233,7 +233,8 @@ def add_item(
     depends: list[str] | None = None,
 ) -> WorkItem:
     """Add a new OPEN work item with an auto-assigned ID."""
-    item_id = next_item_id(paths, division_code)
+    code = division_code or _division_code_from_paths(paths)
+    item_id = next_item_id(paths, code)
     item = WorkItem(
         id=item_id,
         state=ItemState.OPEN,

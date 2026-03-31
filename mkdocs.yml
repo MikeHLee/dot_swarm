@@ -1,6 +1,8 @@
 site_name: SwarmCity
-site_description: Minimal, git-native, markdown-first agent orchestration.
-repo_url: https://github.com/oasis-x/swarm-city
+site_description: Minimal, git-native, markdown-first agent orchestration for multi-repo organizations.
+site_url: https://mikehlee.github.io/SwarmCity/
+repo_url: https://github.com/MikeHLee/SwarmCity
+repo_name: MikeHLee/SwarmCity
 edit_uri: edit/main/docs/
 
 theme:
@@ -23,13 +25,21 @@ theme:
   features:
     - navigation.sections
     - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
     - content.code.copy
+    - content.code.annotate
 
 nav:
   - Home: index.md
-  - Architecture: ARCHITECTURE.md
-  - Platform Setup: PLATFORM_SETUP.md
-  - Drift Check Setup: DRIFT_CHECK_SETUP.md
+  - Getting Started:
+      - Platform Setup: PLATFORM_SETUP.md
+      - Drift Check: DRIFT_CHECK_SETUP.md
+  - Reference:
+      - CLI Reference: CLI_REFERENCE.md
+      - Architecture & Internals: ARCHITECTURE.md
+  - Credits & Inspiration: CREDITS.md
 
 markdown_extensions:
   - admonition
@@ -43,5 +53,9 @@ markdown_extensions:
       anchor_linenums: true
   - pymdownx.inlinehilite
   - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - attr_list
+  - md_in_html
   - toc:
       permalink: true

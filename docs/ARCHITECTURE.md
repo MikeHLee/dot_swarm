@@ -1,8 +1,8 @@
 # SwarmCity — Implementation Bible
 
-**Version**: 0.1.0-alpha
-**Status**: Phase 0 (scaffolding)
-**Last updated**: 2026-03-26
+**Version**: 0.3.0
+**Status**: Phase 1 (operational)
+**Last updated**: 2026-03-30
 **Author**: human-ML + claude-code
 
 This document is the single source of truth for the SwarmCity project. It covers the
