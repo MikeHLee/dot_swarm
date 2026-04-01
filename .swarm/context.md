@@ -17,5 +17,6 @@ SwarmCity is a minimal, git-native, markdown-first agent orchestration system fo
 
 ## Current Focus Areas
 
-1. **Swarm Visualizer**: GUI for visualizing swarm trails in a GitHub repo to provide better visibility into agent activity.
-2. **Hierarchical Alignment**: CLI commands (`up` and `down`) to manage alignment and relation of work items across parent and child directories/repositories.
+1. **Distribution (Phase 4)**: Publishing dot-swarm to PyPI and Homebrew. PyPI workflow is in place; blocked on Trusted Publishing OIDC setup. Homebrew formula needs update after first PyPI publish.
+2. **Swarm Visualizer**: GUI for visualizing swarm trails — complete.
+3. **Hierarchical Alignment**: CLI commands (`up` and `down`) — complete.
