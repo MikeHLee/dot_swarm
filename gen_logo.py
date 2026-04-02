@@ -23,9 +23,15 @@ parser.add_argument("--bg", default=None,
                     help="Path to a background image (overrides hex-text default)")
 parser.add_argument("--frames",  type=int, default=60)
 parser.add_argument("--fps",     type=int, default=20)
-parser.add_argument("--boids",   type=int, default=90)
-parser.add_argument("--width",   type=int, default=640)
-parser.add_argument("--height",  type=int, default=240)
+parser.add_argument("--boids",       type=int,   default=90)
+parser.add_argument("--width",       type=int,   default=640)
+parser.add_argument("--height",      type=int,   default=240)
+parser.add_argument("--sprite",      default=None,
+                    help="PNG or GIF sprite to replace dots (transparency preserved)")
+parser.add_argument("--sprite-size", type=int,   default=None,
+                    help="Sprite diameter in px (default: 4 × DOT_R)")
+parser.add_argument("--dot-color",   default="#000000",
+                    help="Dot fill colour as #RRGGBB (default black)")
 args = parser.parse_args()
 
 W, H       = args.width, args.height
@@ -103,6 +109,28 @@ def load_custom_background(path, w, h):
     img = img.resize((w, h), Image.LANCZOS)
     return img
 
+def load_sprite_frames(path, size):
+    """Load a PNG or animated GIF → list of RGBA Images scaled to size×size.
+    Transparency is preserved; each frame is ready for paste() with mask."""
+    src = Image.open(path)
+    frames = []
+    try:
+        while True:
+            frames.append(src.convert("RGBA").resize((size, size), Image.LANCZOS).copy())
+            src.seek(src.tell() + 1)
+    except EOFError:
+        pass
+    if not frames:
+        frames = [src.convert("RGBA").resize((size, size), Image.LANCZOS)]
+    return frames
+
+def parse_hex_color(hex_str):
+    """Parse #RRGGBB or #RGB → (R, G, B) tuple."""
+    h = hex_str.lstrip("#")
+    if len(h) == 3:
+        h = "".join(c*2 for c in h)
+    return tuple(int(h[i:i+2], 16) for i in (0, 2, 4))
+
 # ── Boid simulation (main canvas) ─────────────────────────────────────────────
 class Boid:
     MAX_SPEED     = 2.8
@@ -130,6 +158,8 @@ class Boid:
         self.origin     = None   # set by capture_origin() after warmup
         self.origin_vel = None
         self.wander_theta = random.uniform(0, 2*math.pi)
+        self.sprite_phase = random.uniform(0, 100)   # per-boid animation offset
+        self._rp = 0.0                               # last return_progress (for update)
 
     def capture_origin(self):
         """Record current state as the loop origin (call after warmup)."""
@@ -207,16 +237,25 @@ class Boid:
             home_vec = self._torus_vec(self.origin)
             f += steer(home_vec) * self.HOME_W_MAX * smooth_t
 
-            # velocity matching in the second half
-            if return_progress > 0.5:
-                vel_blend = (return_progress - 0.5) / 0.5
-                f += (self.origin_vel - self.vel) * 0.3 * vel_blend
+            # velocity matching: start at 40%, weight 0.5 — feeds convergence
+            if return_progress > 0.4:
+                vel_blend = (return_progress - 0.4) / 0.6
+                f += (self.origin_vel - self.vel) * 0.5 * vel_blend
 
+        self._rp = return_progress
         self.acc = f
 
     def update(self):
         self.vel  = self._limit(self.vel + self.acc, self.MAX_SPEED)
         self.vel *= 0.98                                    # gentle damping
+
+        # Direct velocity blend in final 30%: guarantees heading convergence at loop point
+        # ease-in so it doesn't disrupt mid-animation movement
+        if self._rp > 0.7 and self.origin_vel is not None:
+            t     = (self._rp - 0.7) / 0.3               # 0 → 1 in last 30%
+            blend = t * t                                  # ease-in
+            self.vel = self.vel + (self.origin_vel - self.vel) * blend
+
         self.pos  = (self.pos + self.vel) % np.array([self.w, self.h])
         self.acc *= 0
 
@@ -341,7 +380,17 @@ else:
     print("Generating hex-text background…")
     bg = make_hex_background(W, H)
 
-# Grid initialization: spread boids evenly across canvas with jitter
+# ── Parse rendering options ──────────────────────────────────────────────────
+dot_color     = parse_hex_color(args.dot_color)
+sprite_size   = args.sprite_size or int(DOT_R * 4)
+sprite_frames = []
+if args.sprite:
+    print(f"Loading sprite: {args.sprite} @ {sprite_size}px…")
+    sprite_frames = load_sprite_frames(args.sprite, sprite_size)
+    print(f"  {len(sprite_frames)} sprite frame(s) loaded.")
+sprite_r = sprite_size // 2   # half-size for centring
+
+# ── Grid initialization: spread boids evenly across canvas with jitter ────────
 print("Initialising main boids (grid spread)…")
 cols = math.ceil(math.sqrt(N_BOIDS * W / H))
 rows = math.ceil(N_BOIDS / cols)
@@ -394,10 +443,21 @@ icon_frames = []
 
 for f in range(N_FRAMES):
     # Render BEFORE stepping so frame 0 = exact origin state, frame N-1 ≈ origin
-    frame = bg.copy()
-    draw  = ImageDraw.Draw(frame)
-    for b in boids:
-        draw_boid(draw, b.pos, b.vel)
+    if sprite_frames:
+        # RGBA compositing preserves sprite transparency over the background
+        frame = bg.convert("RGBA").copy()
+        for b in boids:
+            fidx = int(b.sprite_phase) % len(sprite_frames)
+            spr  = sprite_frames[fidx]
+            px   = int(b.pos[0]) - sprite_r
+            py   = int(b.pos[1]) - sprite_r
+            frame.paste(spr, (px, py), spr)       # spr as mask preserves alpha
+        frame = frame.convert("RGB")
+    else:
+        frame = bg.copy()
+        draw  = ImageDraw.Draw(frame)
+        for b in boids:
+            draw_boid(draw, b.pos, b.vel, color=dot_color)
     main_frames.append(frame.convert("P", palette=Image.ADAPTIVE, colors=16))
 
     icon_frame = supersampled_icon_frame(icon_boids, ICON_SIZE)
@@ -408,7 +468,10 @@ for f in range(N_FRAMES):
     # Step physics AFTER rendering
     return_progress = (f + 1) / N_FRAMES
     for b in boids: b.flock(boids, return_progress=return_progress)
-    for b in boids: b.update()
+    for b in boids:
+        b.update()
+        # Advance sprite animation: faster boids cycle frames faster
+        b.sprite_phase += np.linalg.norm(b.vel) * 0.12
 
     for b in icon_boids: b.flock_and_orbit(icon_boids)
     for b in icon_boids: b.update()
