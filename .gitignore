@@ -7,4 +7,17 @@ build/
 venv/
 *.swp
 .DS_Store
-.venv/
+
+# GIF generator scripts and input assets
+gen_logo.py
+generate_logo.py
+*.png
+frames/
+
+# Keep output GIFs (negation rules)
+!logo.gif
+!icon.gif
+!logo_black.gif
+!logo_white.gif
+!icon_black.gif
+!icon_white.gif
