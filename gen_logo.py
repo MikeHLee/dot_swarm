@@ -254,12 +254,29 @@ class Boid:
             # Hard transition to perfect origin to guarantee loop match
             enforce_factor = (return_progress - 0.85) / 0.15  # 0.0 to 1.0
             
-            # Interpolate position and velocity directly towards origin
-            self.pos[0] = self.pos[0] * (1 - enforce_factor) + self.origin[0] * enforce_factor
-            self.pos[1] = self.pos[1] * (1 - enforce_factor) + self.origin[1] * enforce_factor
+            # During interpolation we MUST calculate the distance to origin at every frame, 
+            # not just use the initially calculated ret_x/ret_y which might be wrong.
+            curr_ret_x = self.origin[0] - self.pos[0]
+            if abs(curr_ret_x) > self.w/2: curr_ret_x = -np.sign(curr_ret_x) * (self.w - abs(curr_ret_x))
             
-            self.vel[0] = self.vel[0] * (1 - enforce_factor) + self.origin_vel[0] * enforce_factor
-            self.vel[1] = self.vel[1] * (1 - enforce_factor) + self.origin_vel[1] * enforce_factor
+            curr_ret_y = self.origin[1] - self.pos[1]
+            if abs(curr_ret_y) > self.h/2: curr_ret_y = -np.sign(curr_ret_y) * (self.h - abs(curr_ret_y))
+            
+            # Step size is proportional to enforce_factor to smoothly pull them to origin
+            step_x = curr_ret_x * (enforce_factor * 0.2)
+            step_y = curr_ret_y * (enforce_factor * 0.2)
+            
+            # If we're on the very last frame, snap exactly to origin to ensure perfect loop
+            if return_progress >= 0.99:
+                self.pos[0] = self.origin[0]
+                self.pos[1] = self.origin[1]
+                self.vel[0] = self.origin_vel[0]
+                self.vel[1] = self.origin_vel[1]
+            else:
+                self.pos[0] += step_x
+                self.pos[1] += step_y
+                self.vel[0] = self.vel[0] * (1 - enforce_factor) + self.origin_vel[0] * enforce_factor
+                self.vel[1] = self.vel[1] * (1 - enforce_factor) + self.origin_vel[1] * enforce_factor
             
             # Kill acceleration so update() doesn't ruin the interpolation
             self.acc *= 0
@@ -271,9 +288,18 @@ class Boid:
         self.acc = f
 
     def update(self):
+        # Apply velocity to position
         self.vel = self._limit(self.vel + self.acc, self.MAX_SPEED)
-        self.pos = (self.pos + self.vel) % np.array([self.w, self.h])
-        self.acc *= 0
+        
+        # Only add velocity to position if we have acceleration (meaning we aren't in the hard-interpolation phase)
+        # If acc is zero, we are in interpolation phase and position is already handled in flock()
+        if np.any(self.acc):
+            self.pos = (self.pos + self.vel)
+            self.acc *= 0
+        
+        # Always wrap position to maintain torus topology, even during interpolation
+        self.pos[0] %= self.w
+        self.pos[1] %= self.h
 
 # ── Icon boid (orbital vortex) ────────────────────────────────────────────────
 class IconBoid:
