@@ -105,201 +105,118 @@ def load_custom_background(path, w, h):
 
 # ── Boid simulation (main canvas) ─────────────────────────────────────────────
 class Boid:
-    MAX_SPEED  = 3.2    # faster for more dynamic movement
-    MAX_FORCE  = 0.15   # stronger turning
-    SEP_RADIUS = 35.0   # keep apart distance
-    ALI_RADIUS = 80.0   # align with more neighbors for flowing streams
-    COH_RADIUS = 100.0  # wider view of group center
-    RETURN_WEIGHT = 0.08  
-    WANDER_WEIGHT = 0.2   
-    WANDER_RADIUS = 20.0  
-    WANDER_DIST   = 30.0  
-    WANDER_JITTER = 0.3   
+    MAX_SPEED     = 2.8
+    MAX_FORCE     = 0.14
+    SEP_RADIUS    = 38.0   # keep-apart zone
+    ALI_RADIUS    = 75.0   # alignment awareness
+    COH_RADIUS    = 95.0   # cohesion awareness
+    # Force weights — all pass through steer() so each is capped at MAX_FORCE
+    SEP_W         = 2.8    # avoidance: highest priority
+    ALI_W         = 1.2    # alignment: flow together
+    COH_W         = 0.5    # cohesion: weak, just maintains loose group
+    ORBIT_W       = 0.45   # tangential circling around group centre
+    WANDER_W      = 0.35   # exploration (fades at 60%)
+    HOME_W_MAX    = 5.0    # home force ceiling — must dominate by t=1
+    WANDER_RADIUS = 14.0
+    WANDER_DIST   = 22.0
+    WANDER_JITTER = 0.25
 
-    def __init__(self, w, h, orbital_init=False):
+    def __init__(self, w, h):
         self.w, self.h = w, h
-        if orbital_init:
-            # Maximum-entropy initialization (spread out evenly)
-            # Use Poisson disk sampling or grid with jitter for even distribution
-            # For simplicity, we'll use a randomized grid approach to ensure even spread
-            
-            # We don't have the grid index here, so we just use uniform random distribution
-            # but spread across the entire canvas, not clustered in the center
-            self.pos = np.array([random.uniform(0, w), random.uniform(0, h)], dtype=float)
-            
-            # Initial velocity direction: swirling around center to maintain some cohesion
-            cx, cy = w/2, h/2
-            dx, dy = self.pos[0] - cx, self.pos[1] - cy
-            angle = math.atan2(dy, dx)
-            
-            # Tangential velocity (orbital motion but spread out)
-            tangent = np.array([-math.sin(angle), math.cos(angle)])
-            speed = random.uniform(1.2, 2.0)
-            self.vel = tangent * speed
-        else:
-            self.pos = np.array([random.uniform(0, w), random.uniform(0, h)], dtype=float)
-            a = random.uniform(0, 2*math.pi)
-            s = random.uniform(1.0, self.MAX_SPEED)
-            self.vel = np.array([math.cos(a)*s, math.sin(a)*s])
-        self.origin = self.pos.copy()  # store starting position for loop
-        self.origin_vel = self.vel.copy()
+        self.pos = np.array([random.uniform(0, w), random.uniform(0, h)], dtype=float)
+        a = random.uniform(0, 2*math.pi)
+        self.vel = np.array([math.cos(a), math.sin(a)]) * random.uniform(1.0, self.MAX_SPEED)
         self.acc = np.zeros(2)
+        self.origin     = None   # set by capture_origin() after warmup
+        self.origin_vel = None
         self.wander_theta = random.uniform(0, 2*math.pi)
+
+    def capture_origin(self):
+        """Record current state as the loop origin (call after warmup)."""
+        self.origin     = self.pos.copy()
+        self.origin_vel = self.vel.copy()
 
     def _limit(self, v, mag):
         n = np.linalg.norm(v)
-        return v/n*mag if n > mag else v
+        return v / n * mag if n > mag else v
+
+    def _torus_vec(self, target):
+        """Shortest vector from self.pos to target on the torus."""
+        dx = target[0] - self.pos[0]
+        dy = target[1] - self.pos[1]
+        if abs(dx) > self.w / 2: dx -= math.copysign(self.w, dx)
+        if abs(dy) > self.h / 2: dy -= math.copysign(self.h, dy)
+        return np.array([dx, dy])
 
     def flock(self, boids, return_progress=0.0):
-        """
-        return_progress: 0.0 at start, 1.0 at end of animation.
-        Applies increasing spring force back to origin.
-        """
         sep = np.zeros(2); sc = 0
         ali = np.zeros(2); ac = 0
         coh = np.zeros(2); cc = 0
+
         for o in boids:
             if o is self: continue
-            d = np.linalg.norm(o.pos - self.pos)
-            # Use wrapped distance for torus topology
-            dx = abs(self.pos[0] - o.pos[0])
-            dy = abs(self.pos[1] - o.pos[1])
-            dx = min(dx, self.w - dx)
-            dy = min(dy, self.h - dy)
-            torus_d = math.sqrt(dx*dx + dy*dy)
-            
-            if 0 < torus_d < self.SEP_RADIUS: 
-                # Direction vector handling wrap
-                dir_x = self.pos[0] - o.pos[0]
-                if abs(dir_x) > self.w/2: dir_x = -np.sign(dir_x) * (self.w - abs(dir_x))
-                dir_y = self.pos[1] - o.pos[1]
-                if abs(dir_y) > self.h/2: dir_y = -np.sign(dir_y) * (self.h - abs(dir_y))
-                sep += np.array([dir_x, dir_y]) / torus_d; sc+=1
-                
-            if 0 < torus_d < self.ALI_RADIUS: ali += o.vel;              ac+=1
-            if 0 < torus_d < self.COH_RADIUS:
-                # Add wrapped position
-                ox = o.pos[0]
-                oy = o.pos[1]
-                if abs(ox - self.pos[0]) > self.w/2: ox += self.w * np.sign(self.pos[0] - ox)
-                if abs(oy - self.pos[1]) > self.h/2: oy += self.h * np.sign(self.pos[1] - oy)
-                coh += np.array([ox, oy]); cc+=1
+            dv = self._torus_vec(o.pos)
+            d  = np.linalg.norm(dv)
+            if 0 < d < self.SEP_RADIUS:
+                sep += -dv / d; sc += 1        # push away
+            if 0 < d < self.ALI_RADIUS:
+                ali += o.vel;    ac += 1
+            if 0 < d < self.COH_RADIUS:
+                coh += dv;       cc += 1        # relative offset, not absolute pos
 
         def steer(desired):
             n = np.linalg.norm(desired)
             if n == 0: return np.zeros(2)
-            return self._limit(desired/n*self.MAX_SPEED - self.vel, self.MAX_FORCE)
+            return self._limit(desired / n * self.MAX_SPEED - self.vel, self.MAX_FORCE)
+
+        # ── flocking forces (gradually yield to home) ──
+        flock_scale = 1.0 - return_progress * 0.6   # 1.0 → 0.4 over animation
 
         f = np.zeros(2)
-        
-        # Wander force (exploration incentive)
-        # Only active in the first 70% of the animation, fading out as return phase begins
-        explore_progress = max(0, 1.0 - (return_progress / 0.7))
-        if explore_progress > 0:
-            self.wander_theta += random.uniform(-self.WANDER_JITTER, self.WANDER_JITTER)
-            
-            # Predict future position
-            vel_norm = np.linalg.norm(self.vel)
-            if vel_norm > 0:
-                future_pos = self.pos + (self.vel / vel_norm) * self.WANDER_DIST
-                
-                # Target on wander circle
-                target = future_pos + np.array([
-                    math.cos(self.wander_theta) * self.WANDER_RADIUS,
-                    math.sin(self.wander_theta) * self.WANDER_RADIUS
-                ])
-                
-                # Steer towards target
-                wander_steer = steer(target - self.pos)
-                f += wander_steer * self.WANDER_WEIGHT * explore_progress
 
-        if sc: f += steer(sep/sc) * 3.5  # Strong separation (avoid neighbors)
-        if ac: av=ali/ac; n=np.linalg.norm(av); f += steer(av/n*self.MAX_SPEED if n else av) * 1.5 # Strong alignment (flow together)
-        if cc: f += steer(coh/cc - self.pos) * 0.8 # Moderate cohesion (stay in group)
-
-        # Circling average position (orthogonal force relative to group center)
+        if sc: f += steer(sep / sc) * self.SEP_W * flock_scale
+        if ac:
+            av = ali / ac
+            n  = np.linalg.norm(av)
+            f += steer(av / n * self.MAX_SPEED if n else np.zeros(2)) * self.ALI_W * flock_scale
         if cc:
-            group_center = coh/cc
-            vec_to_center = group_center - self.pos
-            dist_to_center = np.linalg.norm(vec_to_center)
-            if dist_to_center > 0:
-                # Tangent vector (perpendicular to center) for circling
-                tangent = np.array([-vec_to_center[1], vec_to_center[0]])
-                # Force them to orbit the group center at a comfortable distance
-                orbit_steer = steer(tangent)
-                f += orbit_steer * 0.6
+            f += steer(coh / cc) * self.COH_W * flock_scale
+            # Circling: tangent to the average offset direction
+            avg_offset = coh / cc
+            tang = np.array([-avg_offset[1], avg_offset[0]])
+            f += steer(tang) * self.ORBIT_W * flock_scale
 
-        # Return-to-origin spring force
-        # Calculate shortest path on torus
-        ret_x = self.origin[0] - self.pos[0]
-        if abs(ret_x) > self.w/2: ret_x = -np.sign(ret_x) * (self.w - abs(ret_x))
-        
-        ret_y = self.origin[1] - self.pos[1]
-        if abs(ret_y) > self.h/2: ret_y = -np.sign(ret_y) * (self.h - abs(ret_y))
-        
-        return_force = np.array([ret_x, ret_y])
-        
-        # Center attraction (gentle pull to middle to prevent scattering to edges)
-        center_x = self.w/2 - self.pos[0]
-        if abs(center_x) > self.w/2: center_x = -np.sign(center_x) * (self.w - abs(center_x))
-        center_y = self.h/2 - self.pos[1]
-        if abs(center_y) > self.h/2: center_y = -np.sign(center_y) * (self.h - abs(center_y))
-        center_force = np.array([center_x, center_y])
-        
-        f += center_force * 0.015  # gentle pull to center
-        
-        # Smooth return-to-origin using steep polynomial ramp
-        # During the final 15% of animation, strictly enforce the position to ensure a perfect loop
-        if return_progress > 0.85:
-            # Hard transition to perfect origin to guarantee loop match
-            enforce_factor = (return_progress - 0.85) / 0.15  # 0.0 to 1.0
-            
-            # During interpolation we MUST calculate the distance to origin at every frame, 
-            # not just use the initially calculated ret_x/ret_y which might be wrong.
-            curr_ret_x = self.origin[0] - self.pos[0]
-            if abs(curr_ret_x) > self.w/2: curr_ret_x = -np.sign(curr_ret_x) * (self.w - abs(curr_ret_x))
-            
-            curr_ret_y = self.origin[1] - self.pos[1]
-            if abs(curr_ret_y) > self.h/2: curr_ret_y = -np.sign(curr_ret_y) * (self.h - abs(curr_ret_y))
-            
-            # Step size is proportional to enforce_factor to smoothly pull them to origin
-            step_x = curr_ret_x * (enforce_factor * 0.2)
-            step_y = curr_ret_y * (enforce_factor * 0.2)
-            
-            # If we're on the very last frame, snap exactly to origin to ensure perfect loop
-            if return_progress >= 0.99:
-                self.pos[0] = self.origin[0]
-                self.pos[1] = self.origin[1]
-                self.vel[0] = self.origin_vel[0]
-                self.vel[1] = self.origin_vel[1]
-            else:
-                self.pos[0] += step_x
-                self.pos[1] += step_y
-                self.vel[0] = self.vel[0] * (1 - enforce_factor) + self.origin_vel[0] * enforce_factor
-                self.vel[1] = self.vel[1] * (1 - enforce_factor) + self.origin_vel[1] * enforce_factor
-            
-            # Kill acceleration so update() doesn't ruin the interpolation
-            self.acc *= 0
-            return
-            
-        weight = self.RETURN_WEIGHT * (return_progress ** 3.0) # very steep ramp
-        f += return_force * weight
+        # ── wander (exploration, fades at 60%) ──
+        explore = max(0.0, 1.0 - return_progress / 0.6)
+        if explore > 0:
+            self.wander_theta += random.uniform(-self.WANDER_JITTER, self.WANDER_JITTER)
+            vn = np.linalg.norm(self.vel)
+            if vn > 0:
+                ahead  = self.pos + (self.vel / vn) * self.WANDER_DIST
+                target = ahead + np.array([math.cos(self.wander_theta), math.sin(self.wander_theta)]) * self.WANDER_RADIUS
+                f += steer(self._torus_vec(target)) * self.WANDER_W * explore
+
+        # ── home force: properly capped via steer(), smoothstep ramp ──
+        # smoothstep: slow start, fast middle, slow end
+        if self.origin is not None:
+            t = return_progress
+            smooth_t = t * t * (3.0 - 2.0 * t)
+            home_w = self.HOME_W_MAX * smooth_t
+            home_vec = self._torus_vec(self.origin)
+            f += steer(home_vec) * home_w
+
+            # velocity matching in the second half
+            if return_progress > 0.5:
+                vel_blend = (return_progress - 0.5) / 0.5
+                f += (self.origin_vel - self.vel) * 0.25 * vel_blend
 
         self.acc = f
 
     def update(self):
-        # Apply velocity to position
-        self.vel = self._limit(self.vel + self.acc, self.MAX_SPEED)
-        
-        # Only add velocity to position if we have acceleration (meaning we aren't in the hard-interpolation phase)
-        # If acc is zero, we are in interpolation phase and position is already handled in flock()
-        if np.any(self.acc):
-            self.pos = (self.pos + self.vel)
-            self.acc *= 0
-        
-        # Always wrap position to maintain torus topology, even during interpolation
-        self.pos[0] %= self.w
-        self.pos[1] %= self.h
+        self.vel  = self._limit(self.vel + self.acc, self.MAX_SPEED)
+        self.vel *= 0.98                                    # gentle damping
+        self.pos  = (self.pos + self.vel) % np.array([self.w, self.h])
+        self.acc *= 0
 
 # ── Icon boid (orbital vortex) ────────────────────────────────────────────────
 class IconBoid:
@@ -427,12 +344,43 @@ else:
     print("Generating hex-text background…")
     bg = make_hex_background(W, H)
 
-# Main boids (orbital init for smooth looping)
-print("Initialising main boids (orbital)…")
-boids = [Boid(W, H, orbital_init=True) for _ in range(N_BOIDS)]
-for _ in range(60):          # warm-up
-    for b in boids: b.flock(boids, return_progress=0.0)
+# Grid initialization: spread boids evenly across canvas with jitter
+print("Initialising main boids (grid spread)…")
+cols = math.ceil(math.sqrt(N_BOIDS * W / H))
+rows = math.ceil(N_BOIDS / cols)
+cell_w, cell_h = W / cols, H / rows
+boids = []
+for i in range(N_BOIDS):
+    b = Boid(W, H)
+    col, row = i % cols, i // cols
+    b.pos = np.array([
+        (col + 0.5) * cell_w + random.uniform(-cell_w * 0.3, cell_w * 0.3),
+        (row + 0.5) * cell_h + random.uniform(-cell_h * 0.3, cell_h * 0.3),
+    ], dtype=float)
+    b.pos[0] = max(5, min(W - 5, b.pos[0]))
+    b.pos[1] = max(5, min(H - 5, b.pos[1]))
+    boids.append(b)
+
+# Warmup with separation-only so boids settle into natural spread (no cohesion pulling together)
+print("Warmup (separation only, 60 steps)…")
+for _ in range(60):
+    for b in boids:
+        sep = np.zeros(2); sc = 0
+        for o in boids:
+            if o is b: continue
+            dv = b._torus_vec(o.pos)
+            d  = np.linalg.norm(dv)
+            if 0 < d < b.SEP_RADIUS:
+                sep += -dv / d; sc += 1
+        if sc:
+            n = np.linalg.norm(sep / sc)
+            desired = sep / sc / n * b.MAX_SPEED if n > 0 else np.zeros(2)
+            b.acc = b._limit(desired - b.vel, b.MAX_FORCE) * b.SEP_W
     for b in boids: b.update()
+
+# Capture origin AFTER warmup — frame 0 will match this state exactly
+for b in boids: b.capture_origin()
+print("Captured origin positions for seamless loop.")
 
 # Icon boids
 print("Initialising icon boids…")
@@ -448,26 +396,25 @@ main_frames = []
 icon_frames = []
 
 for f in range(N_FRAMES):
-    # Calculate return progress (0 at start, 1 at end)
-    return_progress = f / max(N_FRAMES - 1, 1)
-
-    # step main
-    for b in boids: b.flock(boids, return_progress=return_progress)
-    for b in boids: b.update()
-
+    # Render BEFORE stepping so frame 0 = exact origin state, frame N-1 ≈ origin
     frame = bg.copy()
     draw  = ImageDraw.Draw(frame)
     for b in boids:
         draw_boid(draw, b.pos, b.vel)
     main_frames.append(frame.convert("P", palette=Image.ADAPTIVE, colors=16))
 
-    # step icon
-    for b in icon_boids: b.flock_and_orbit(icon_boids)
-    for b in icon_boids: b.update()
     icon_frame = supersampled_icon_frame(icon_boids, ICON_SIZE)
     icon_frames.append(icon_frame.convert("P", palette=Image.ADAPTIVE, colors=16))
 
     if f % 10 == 0: print(f"  frame {f}/{N_FRAMES}")
+
+    # Step physics AFTER rendering
+    return_progress = (f + 1) / N_FRAMES
+    for b in boids: b.flock(boids, return_progress=return_progress)
+    for b in boids: b.update()
+
+    for b in icon_boids: b.flock_and_orbit(icon_boids)
+    for b in icon_boids: b.update()
 
 print("Saving logo.gif…")
 ms = int(1000 / FPS)
