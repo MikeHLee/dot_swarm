@@ -105,16 +105,16 @@ def load_custom_background(path, w, h):
 
 # ── Boid simulation (main canvas) ─────────────────────────────────────────────
 class Boid:
-    MAX_SPEED  = 2.8
-    MAX_FORCE  = 0.12
-    SEP_RADIUS = 40.0   # increased from 28.0 for stronger keep-apart
-    ALI_RADIUS = 55.0
-    COH_RADIUS = 60.0
-    RETURN_WEIGHT = 0.08  # base weight for return-to-origin spring
-    WANDER_WEIGHT = 0.4   # weight for random exploration force
-    WANDER_RADIUS = 15.0  # size of wander circle
-    WANDER_DIST   = 25.0  # distance of wander circle ahead of boid
-    WANDER_JITTER = 0.5   # how much wander angle changes per frame
+    MAX_SPEED  = 3.2    # faster for more dynamic movement
+    MAX_FORCE  = 0.15   # stronger turning
+    SEP_RADIUS = 35.0   # keep apart distance
+    ALI_RADIUS = 80.0   # align with more neighbors for flowing streams
+    COH_RADIUS = 100.0  # wider view of group center
+    RETURN_WEIGHT = 0.08  
+    WANDER_WEIGHT = 0.2   
+    WANDER_RADIUS = 20.0  
+    WANDER_DIST   = 30.0  
+    WANDER_JITTER = 0.3   
 
     def __init__(self, w, h, orbital_init=False):
         self.w, self.h = w, h
@@ -213,11 +213,21 @@ class Boid:
                 wander_steer = steer(target - self.pos)
                 f += wander_steer * self.WANDER_WEIGHT * explore_progress
 
-        # Separation is the dominant force (keep-apart dynamic)
-        if sc: f += steer(sep/sc) * 3.5  # increased from 1.8
-        if ac: av=ali/ac; n=np.linalg.norm(av); f += steer(av/n*self.MAX_SPEED if n else av) * 1.0
-        # Reduce cohesion so they don't clump as much
-        if cc: f += steer(coh/cc - self.pos) * 0.4  # decreased from 1.0
+        if sc: f += steer(sep/sc) * 3.5  # Strong separation (avoid neighbors)
+        if ac: av=ali/ac; n=np.linalg.norm(av); f += steer(av/n*self.MAX_SPEED if n else av) * 1.5 # Strong alignment (flow together)
+        if cc: f += steer(coh/cc - self.pos) * 0.8 # Moderate cohesion (stay in group)
+
+        # Circling average position (orthogonal force relative to group center)
+        if cc:
+            group_center = coh/cc
+            vec_to_center = group_center - self.pos
+            dist_to_center = np.linalg.norm(vec_to_center)
+            if dist_to_center > 0:
+                # Tangent vector (perpendicular to center) for circling
+                tangent = np.array([-vec_to_center[1], vec_to_center[0]])
+                # Force them to orbit the group center at a comfortable distance
+                orbit_steer = steer(tangent)
+                f += orbit_steer * 0.6
 
         # Return-to-origin spring force
         # Calculate shortest path on torus
