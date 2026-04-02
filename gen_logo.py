@@ -115,11 +115,11 @@ class Boid:
     ALI_W         = 1.2    # alignment: flow together
     COH_W         = 0.5    # cohesion: weak, just maintains loose group
     ORBIT_W       = 0.45   # tangential circling around group centre
-    WANDER_W      = 0.35   # exploration (fades at 60%)
+    WANDER_W      = 1.2    # exploration (fades as inverse of home ramp)
     HOME_W_MAX    = 5.0    # home force ceiling — must dominate by t=1
-    WANDER_RADIUS = 14.0
-    WANDER_DIST   = 22.0
-    WANDER_JITTER = 0.25
+    WANDER_RADIUS = 20.0
+    WANDER_DIST   = 28.0
+    WANDER_JITTER = 0.4
 
     def __init__(self, w, h):
         self.w, self.h = w, h
@@ -186,29 +186,31 @@ class Boid:
             tang = np.array([-avg_offset[1], avg_offset[0]])
             f += steer(tang) * self.ORBIT_W * flock_scale
 
-        # ── wander (exploration, fades at 60%) ──
-        explore = max(0.0, 1.0 - return_progress / 0.6)
-        if explore > 0:
+        # ── explore ↔ home tradeoff (same smoothstep, complementary weights) ──
+        # smooth_t: 0 at start → 1 at end (home wins)
+        # explore_t: 1 at start → 0 at end (exploration wins early)
+        t = return_progress
+        smooth_t  = t * t * (3.0 - 2.0 * t)   # smoothstep
+        explore_t = 1.0 - smooth_t             # exact complement
+
+        # Wander (Reynolds steering toward a jittering point ahead)
+        if explore_t > 0:
             self.wander_theta += random.uniform(-self.WANDER_JITTER, self.WANDER_JITTER)
             vn = np.linalg.norm(self.vel)
             if vn > 0:
                 ahead  = self.pos + (self.vel / vn) * self.WANDER_DIST
                 target = ahead + np.array([math.cos(self.wander_theta), math.sin(self.wander_theta)]) * self.WANDER_RADIUS
-                f += steer(self._torus_vec(target)) * self.WANDER_W * explore
+                f += steer(self._torus_vec(target)) * self.WANDER_W * explore_t
 
-        # ── home force: properly capped via steer(), smoothstep ramp ──
-        # smoothstep: slow start, fast middle, slow end
+        # Home force: grows as explore decays — same smoothstep, complementary
         if self.origin is not None:
-            t = return_progress
-            smooth_t = t * t * (3.0 - 2.0 * t)
-            home_w = self.HOME_W_MAX * smooth_t
             home_vec = self._torus_vec(self.origin)
-            f += steer(home_vec) * home_w
+            f += steer(home_vec) * self.HOME_W_MAX * smooth_t
 
             # velocity matching in the second half
             if return_progress > 0.5:
                 vel_blend = (return_progress - 0.5) / 0.5
-                f += (self.origin_vel - self.vel) * 0.25 * vel_blend
+                f += (self.origin_vel - self.vel) * 0.3 * vel_blend
 
         self.acc = f
 
@@ -286,11 +288,6 @@ class IconBoid:
 def draw_boid(draw, pos, vel, r=DOT_R, color=(0,0,0)):
     x, y = pos
     draw.ellipse([x-r, y-r, x+r, y+r], fill=color)
-    angle = math.atan2(vel[1], vel[0])
-    tx = x - math.cos(angle)*r*2
-    ty = y - math.sin(angle)*r*2
-    tr = r * 0.5
-    draw.ellipse([tx-tr, ty-tr, tx+tr, ty+tr], fill=(60,60,60))
 
 def supersampled_icon_frame(boids_list, size=128, scale=4):
     IS = size * scale
