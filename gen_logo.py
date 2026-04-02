@@ -15,6 +15,7 @@ import argparse
 import math
 import random
 import numpy as np
+from collections import deque
 from PIL import Image, ImageDraw
 
 # ── CLI ───────────────────────────────────────────────────────────────────────
@@ -164,6 +165,9 @@ class Boid:
         self._rp = 0.0                               # last return_progress (for update)
         self.acc_flock_prev   = np.zeros(2)   # jerk-limited flock acc from last step
         self.acc_flock_smooth = np.zeros(2)   # current smooth flock acc (for update() to save)
+        self._vel_history  = deque(maxlen=8)   # rolling velocity window
+        self._jerk_history = deque(maxlen=8)   # rolling |Δacc_flock| window
+        self._vel_history.append(self.vel.copy())
 
     def capture_origin(self):
         """Record current state as the loop origin (call after warmup)."""
@@ -232,21 +236,30 @@ class Boid:
                 f_flock += steer(self._torus_vec(target)) * self.WANDER_W * explore_t
 
         # Jerk constraint on flock forces only
+        # Record raw |Δacc| BEFORE clamping for the jerk history
         da     = f_flock - self.acc_flock_prev
         da_mag = np.linalg.norm(da)
+        self._jerk_history.append(da_mag)
         if da_mag > self.MAX_JERK:
             da = da / da_mag * self.MAX_JERK
         self.acc_flock_smooth = self.acc_flock_prev + da
 
         # ── f_home: phase-space PD return ──
-        # Bypasses jerk limiter — smooth_t is already a gradual ramp,
-        # so home force changes slowly by design and always acts at full intended strength.
+        # Bypasses jerk limiter — smooth_t is already a gradual ramp.
+        # Kd acts on rolling-average velocity (vel_avg) so the heading correction
+        # targets the boid's trajectory trend, not instantaneous velocity spikes.
+        # Kd is also softened when average flock jerk is already high, preventing
+        # compounding choppiness at the end of the animation.
         f_home = np.zeros(2)
         if self.origin is not None:
-            pos_err = self._torus_vec(self.origin)
-            vel_err = self.origin_vel - self.vel
+            pos_err  = self._torus_vec(self.origin)
+            vel_avg  = np.mean(np.stack(self._vel_history), axis=0) \
+                       if len(self._vel_history) > 1 else self.vel.copy()
+            vel_err  = self.origin_vel - vel_avg
+            mean_jerk = np.mean(self._jerk_history) if self._jerk_history else 0.0
+            kd_scale  = 1.0 / (1.0 + mean_jerk * 5.0)   # soften when already jerky
             f_home += steer(pos_err) * self.HOME_KP * smooth_t
-            f_home += steer(vel_err) * self.HOME_KD * smooth_t
+            f_home += steer(vel_err) * self.HOME_KD * smooth_t * kd_scale
 
         self._rp  = return_progress
         self.acc  = self.acc_flock_smooth + f_home
@@ -255,6 +268,7 @@ class Boid:
         self.vel  = self._limit(self.vel + self.acc, self.MAX_SPEED)
         self.vel *= 0.98                                    # gentle damping
         self.pos      = (self.pos + self.vel) % np.array([self.w, self.h])
+        self._vel_history.append(self.vel.copy())            # record after vel update
         self.acc_flock_prev = self.acc_flock_smooth.copy()   # save for next jerk calc
         self.acc           *= 0
 
