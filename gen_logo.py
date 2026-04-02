@@ -111,17 +111,28 @@ class Boid:
     ALI_RADIUS = 55.0
     COH_RADIUS = 60.0
     RETURN_WEIGHT = 0.08  # base weight for return-to-origin spring
+    WANDER_WEIGHT = 0.4   # weight for random exploration force
+    WANDER_RADIUS = 15.0  # size of wander circle
+    WANDER_DIST   = 25.0  # distance of wander circle ahead of boid
+    WANDER_JITTER = 0.5   # how much wander angle changes per frame
 
     def __init__(self, w, h, orbital_init=False):
         self.w, self.h = w, h
         if orbital_init:
-            # Minimum-energy orbital initialization around canvas center
+            # Maximum-entropy initialization (spread out evenly)
+            # Use Poisson disk sampling or grid with jitter for even distribution
+            # For simplicity, we'll use a randomized grid approach to ensure even spread
+            
+            # We don't have the grid index here, so we just use uniform random distribution
+            # but spread across the entire canvas, not clustered in the center
+            self.pos = np.array([random.uniform(0, w), random.uniform(0, h)], dtype=float)
+            
+            # Initial velocity direction: swirling around center to maintain some cohesion
             cx, cy = w/2, h/2
-            angle = random.uniform(0, 2*math.pi)
-            # Distribute radii to avoid clustering
-            r = random.uniform(40, min(w, h) * 0.42)
-            self.pos = np.array([cx + math.cos(angle)*r, cy + math.sin(angle)*r], dtype=float)
-            # Tangential velocity (orbital motion)
+            dx, dy = self.pos[0] - cx, self.pos[1] - cy
+            angle = math.atan2(dy, dx)
+            
+            # Tangential velocity (orbital motion but spread out)
             tangent = np.array([-math.sin(angle), math.cos(angle)])
             speed = random.uniform(1.2, 2.0)
             self.vel = tangent * speed
@@ -131,7 +142,9 @@ class Boid:
             s = random.uniform(1.0, self.MAX_SPEED)
             self.vel = np.array([math.cos(a)*s, math.sin(a)*s])
         self.origin = self.pos.copy()  # store starting position for loop
+        self.origin_vel = self.vel.copy()
         self.acc = np.zeros(2)
+        self.wander_theta = random.uniform(0, 2*math.pi)
 
     def _limit(self, v, mag):
         n = np.linalg.norm(v)
@@ -178,11 +191,33 @@ class Boid:
             return self._limit(desired/n*self.MAX_SPEED - self.vel, self.MAX_FORCE)
 
         f = np.zeros(2)
+        
+        # Wander force (exploration incentive)
+        # Only active in the first 70% of the animation, fading out as return phase begins
+        explore_progress = max(0, 1.0 - (return_progress / 0.7))
+        if explore_progress > 0:
+            self.wander_theta += random.uniform(-self.WANDER_JITTER, self.WANDER_JITTER)
+            
+            # Predict future position
+            vel_norm = np.linalg.norm(self.vel)
+            if vel_norm > 0:
+                future_pos = self.pos + (self.vel / vel_norm) * self.WANDER_DIST
+                
+                # Target on wander circle
+                target = future_pos + np.array([
+                    math.cos(self.wander_theta) * self.WANDER_RADIUS,
+                    math.sin(self.wander_theta) * self.WANDER_RADIUS
+                ])
+                
+                # Steer towards target
+                wander_steer = steer(target - self.pos)
+                f += wander_steer * self.WANDER_WEIGHT * explore_progress
+
         if sc: f += steer(sep/sc) * 1.8
         if ac: av=ali/ac; n=np.linalg.norm(av); f += steer(av/n*self.MAX_SPEED if n else av) * 1.0
         if cc: f += steer(coh/cc - self.pos) * 1.0
 
-        # Return-to-origin spring force (quadratic ramp for smooth loop)
+        # Return-to-origin spring force
         # Calculate shortest path on torus
         ret_x = self.origin[0] - self.pos[0]
         if abs(ret_x) > self.w/2: ret_x = -np.sign(ret_x) * (self.w - abs(ret_x))
@@ -201,7 +236,24 @@ class Boid:
         
         f += center_force * 0.015  # gentle pull to center
         
-        weight = self.RETURN_WEIGHT * (return_progress ** 2.0) # steeper ramp
+        # Smooth return-to-origin using steep polynomial ramp
+        # During the final 15% of animation, strictly enforce the position to ensure a perfect loop
+        if return_progress > 0.85:
+            # Hard transition to perfect origin to guarantee loop match
+            enforce_factor = (return_progress - 0.85) / 0.15  # 0.0 to 1.0
+            
+            # Interpolate position and velocity directly towards origin
+            self.pos[0] = self.pos[0] * (1 - enforce_factor) + self.origin[0] * enforce_factor
+            self.pos[1] = self.pos[1] * (1 - enforce_factor) + self.origin[1] * enforce_factor
+            
+            self.vel[0] = self.vel[0] * (1 - enforce_factor) + self.origin_vel[0] * enforce_factor
+            self.vel[1] = self.vel[1] * (1 - enforce_factor) + self.origin_vel[1] * enforce_factor
+            
+            # Kill acceleration so update() doesn't ruin the interpolation
+            self.acc *= 0
+            return
+            
+        weight = self.RETURN_WEIGHT * (return_progress ** 3.0) # very steep ramp
         f += return_force * weight
 
         self.acc = f
