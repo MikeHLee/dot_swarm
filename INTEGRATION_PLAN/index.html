@@ -1,0 +1,2263 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Minimal, git-native, markdown-first agent orchestration for multi-repo organizations.">
+      
+      
+      
+        <link rel="canonical" href="https://mikehlee.github.io/SwarmCity/INTEGRATION_PLAN/">
+      
+      
+        <link rel="prev" href="../ARCHITECTURE/">
+      
+      
+        <link rel="next" href="../SWARMS_AI_PR_GUIDE/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Integration Plan - SwarmCity</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#dot_swarm-integration-plan-swarm-heal-ogp-federation-scheduling-swarmsai" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="SwarmCity" class="md-header__button md-logo" aria-label="SwarmCity" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            SwarmCity
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Integration Plan
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/MikeHLee/SwarmCity" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    MikeHLee/SwarmCity
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="SwarmCity" class="md-nav__button md-logo" aria-label="SwarmCity" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    SwarmCity
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/MikeHLee/SwarmCity" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    MikeHLee/SwarmCity
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PLATFORM_SETUP/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DRIFT_CHECK_SETUP/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Drift Check
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CLI_REFERENCE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ARCHITECTURE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture & Internals
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Integration Plan
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Integration Plan
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#decisions-made-2026-04-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decisions Made (2026-04-06)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-dependency-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase Dependency Map
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#executive-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Executive Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-swarm-heal-full-ascend-descend-alignment-pass" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. swarm heal — Full Ascend + Descend Alignment Pass
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. swarm heal — Full Ascend + Descend Alignment Pass">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#motivation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Motivation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-exists-today" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Exists Today
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#proposed-design" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Proposed Design
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#oasis-x-alignment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Oasis-X Alignment
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-ogp-lite-federation-layer-implemented-swc-014" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. OGP-Lite Federation Layer — IMPLEMENTED (SWC-014)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. OGP-Lite Federation Layer — IMPLEMENTED (SWC-014)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#motivation_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Motivation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ogp-build-learnings-applied" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OGP Build Learnings Applied
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI Commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implementation-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementation Files
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#oasis-x-alignment_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Oasis-X Alignment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ogp-full-upgrade-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OGP Full Upgrade Path
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-task-scheduling-agentcomputational-composition-implemented-swc-013" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Task Scheduling &amp; Agent/Computational Composition — IMPLEMENTED (SWC-013)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Task Scheduling &amp; Agent/Computational Composition — IMPLEMENTED (SWC-013)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#motivation_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Motivation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#design-decisions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Design Decisions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scheduler-schedulerpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scheduler (scheduler.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workflows-workflowspy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Workflows (workflows.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implementation-files_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementation Files
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#oasis-x-alignment_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Oasis-X Alignment
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-swarmsai-integration-pr-proposal-implemented-swc-015" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. swarms.ai Integration &amp; PR Proposal — IMPLEMENTED (SWC-015)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. swarms.ai Integration &amp; PR Proposal — IMPLEMENTED (SWC-015)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#intersection-analysis-updated" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Intersection Analysis (updated)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pr-deliverables-all-in-srcdot_swarmswarms_providerpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PR Deliverables (all in src/dot_swarm/swarms_provider.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-coverage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test Coverage
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementation-phases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementation Phases
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Implementation Phases">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-1-swarm-heal-1-2-days" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 1: swarm heal (1-2 days)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-2-task-scheduling-workflows-3-5-days" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2: Task Scheduling &amp; Workflows (3-5 days)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-3-ogp-lite-federation-3-5-days" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 3: OGP-Lite Federation (3-5 days)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-4-swarmsai-pr-5-7-days" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 4: swarms.ai PR (5-7 days)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#oasis-x-service-intersection-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Oasis-X Service Intersection Map
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#open-questions-for-review" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Open Questions for Review
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next Steps
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    swarms.ai Integration
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    swarms.ai Integration
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../SWARMS_AI_PR_GUIDE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PR Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CREDITS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Credits & Inspiration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#decisions-made-2026-04-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decisions Made (2026-04-06)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-dependency-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase Dependency Map
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#executive-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Executive Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-swarm-heal-full-ascend-descend-alignment-pass" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. swarm heal — Full Ascend + Descend Alignment Pass
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. swarm heal — Full Ascend + Descend Alignment Pass">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#motivation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Motivation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-exists-today" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Exists Today
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#proposed-design" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Proposed Design
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#oasis-x-alignment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Oasis-X Alignment
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-ogp-lite-federation-layer-implemented-swc-014" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. OGP-Lite Federation Layer — IMPLEMENTED (SWC-014)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. OGP-Lite Federation Layer — IMPLEMENTED (SWC-014)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#motivation_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Motivation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ogp-build-learnings-applied" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OGP Build Learnings Applied
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI Commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implementation-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementation Files
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#oasis-x-alignment_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Oasis-X Alignment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ogp-full-upgrade-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OGP Full Upgrade Path
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-task-scheduling-agentcomputational-composition-implemented-swc-013" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Task Scheduling &amp; Agent/Computational Composition — IMPLEMENTED (SWC-013)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Task Scheduling &amp; Agent/Computational Composition — IMPLEMENTED (SWC-013)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#motivation_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Motivation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#design-decisions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Design Decisions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scheduler-schedulerpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scheduler (scheduler.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workflows-workflowspy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Workflows (workflows.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implementation-files_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementation Files
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#oasis-x-alignment_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Oasis-X Alignment
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-swarmsai-integration-pr-proposal-implemented-swc-015" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. swarms.ai Integration &amp; PR Proposal — IMPLEMENTED (SWC-015)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. swarms.ai Integration &amp; PR Proposal — IMPLEMENTED (SWC-015)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#intersection-analysis-updated" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Intersection Analysis (updated)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pr-deliverables-all-in-srcdot_swarmswarms_providerpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PR Deliverables (all in src/dot_swarm/swarms_provider.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-coverage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test Coverage
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementation-phases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementation Phases
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Implementation Phases">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-1-swarm-heal-1-2-days" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 1: swarm heal (1-2 days)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-2-task-scheduling-workflows-3-5-days" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2: Task Scheduling &amp; Workflows (3-5 days)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-3-ogp-lite-federation-3-5-days" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 3: OGP-Lite Federation (3-5 days)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-4-swarmsai-pr-5-7-days" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 4: swarms.ai PR (5-7 days)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#oasis-x-service-intersection-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Oasis-X Service Intersection Map
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#open-questions-for-review" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Open Questions for Review
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next Steps
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="dot_swarm-integration-plan-swarm-heal-ogp-federation-scheduling-swarmsai">dot_swarm Integration Plan: Swarm Heal, OGP Federation, Scheduling &amp; swarms.ai<a class="headerlink" href="#dot_swarm-integration-plan-swarm-heal-ogp-federation-scheduling-swarmsai" title="Permanent link">&para;</a></h1>
+<p><strong>Created</strong>: 2026-04-06
+<strong>Status</strong>: PHASE 1 COMPLETE — implementation in progress
+<strong>Author</strong>: Cascade + Mike Lee</p>
+<hr />
+<h2 id="decisions-made-2026-04-06">Decisions Made (2026-04-06)<a class="headerlink" href="#decisions-made-2026-04-06" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Decision</th>
+<th>Choice</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Crypto signing</td>
+<td>hashlib HMAC-SHA256 (stdlib)</td>
+<td>No external deps; consistent with dot_swarm philosophy</td>
+</tr>
+<tr>
+<td>Scheduler execution</td>
+<td>cron (not daemon)</td>
+<td>Unix-native; simpler process model</td>
+</tr>
+<tr>
+<td><code>.swarm</code> self-management</td>
+<td>Yes</td>
+<td>Use dot_swarm to track dot_swarm's own implementation</td>
+</tr>
+<tr>
+<td>GitHub drift-check</td>
+<td>Also available as <code>swarm audit --drift</code> (local)</td>
+<td>Same-step parity between terminal and GHA workflow</td>
+</tr>
+<tr>
+<td>swarms.ai PR scope</td>
+<td>Start <code>DotSwarmStateProvider</code> → then <code>StigmergicSwarm</code></td>
+<td>Smaller contribution first, grow from there</td>
+</tr>
+<tr>
+<td>Phase ordering</td>
+<td>Complexity order (1→2→3→4) with blocker awareness</td>
+<td>Crypto (Phase 1) unblocks Federation (Phase 3)</td>
+</tr>
+<tr>
+<td><code>swarm heal</code> security</td>
+<td>Scan for injection, non-disclosure, persona-hijack; log to memory; quarantine on <code>--fix</code></td>
+<td>Findings must never be silently swallowed</td>
+</tr>
+<tr>
+<td><code>swarm ai --chain</code></td>
+<td>Auto-chain AI invocations; <code>--max-steps</code> guard; sign each batch in <code>trail.log</code></td>
+<td>Natural workflow composition through the AI interface</td>
+</tr>
+</tbody>
+</table>
+<h2 id="phase-dependency-map">Phase Dependency Map<a class="headerlink" href="#phase-dependency-map" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Phase 1a — signing.py + security.py + swarms_provider.py  ← DONE (SWC-010)
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  │   [BLOCKS Phase 3: federation needs HMAC primitives]
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  ▼
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>Phase 1b — swarm heal + swarm audit + swarm ai --chain     ← DONE (SWC-011)
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  │   [heal used as workflow step in Phase 2]
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  ▼
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>Phase 1c — docs/CLI_REFERENCE.md update                    ← DONE (SWC-012 complete)
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>  │   [users need docs before federation UX makes sense]
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>  ▼
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>Phase 2 — schedules.md + workflow composition (cron)       ← NEXT (SWC-013)
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>  │   [workflows needed for DotSwarmWorkflow adapter]
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>  │
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>  ├──▶ Phase 3 — OGP-lite federation                       ← After Phase 2 (SWC-014)
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>  │         [already unblocked: crypto done in Phase 1a]
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>  │
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>  └──▶ Phase 4b — StigmergicSwarm PR to swarms.ai          ← After Phase 2 (SWC-015)
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>             [DotSwarmStateProvider already done; needs workflows for full adapter]
+</code></pre></div>
+<hr />
+<h2 id="executive-summary">Executive Summary<a class="headerlink" href="#executive-summary" title="Permanent link">&para;</a></h2>
+<p>This plan proposes four interconnected enhancements to dot_swarm, informed by research into Anthropic's persistent agent patterns, OGP federation, and the swarms.ai multi-agent framework. Each enhancement is designed to complement Oasis-X's existing cloud services (Sentinel, MQ, AI, Data) and the stigmergic coordination model that already underpins dot_swarm.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Feature</th>
+<th>Scope</th>
+<th>Complexity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>swarm heal</code> command</td>
+<td>CLI + operations</td>
+<td>Low</td>
+</tr>
+<tr>
+<td>2</td>
+<td>OGP-lite federation layer</td>
+<td>Agent feature (new files)</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Task scheduling &amp; composition</td>
+<td>Agent feature + MCP</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>4</td>
+<td>swarms.ai integration (PR proposal)</td>
+<td>External contribution</td>
+<td>Medium</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="1-swarm-heal-full-ascend-descend-alignment-pass">1. <code>swarm heal</code> — Full Ascend + Descend Alignment Pass<a class="headerlink" href="#1-swarm-heal-full-ascend-descend-alignment-pass" title="Permanent link">&para;</a></h2>
+<h3 id="motivation">Motivation<a class="headerlink" href="#motivation" title="Permanent link">&para;</a></h3>
+<p>The existing <code>ascend</code> and <code>descend</code> commands each check one direction of the division hierarchy. A "heal" pass runs both sequentially, producing a unified alignment report and optionally proposing corrective operations (add missing refs, flag orphaned items). This mirrors the "glymphatic" clearing concept from Anthropic's Kairos agent — a periodic full-system coherence check.</p>
+<h3 id="what-exists-today">What Exists Today<a class="headerlink" href="#what-exists-today" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>cli.ascend</code> — checks local→parent item references via <code>get_alignment()</code></li>
+<li><code>cli.descend</code> — checks local→children item references via <code>get_alignment()</code> + <code>discover_divisions()</code></li>
+<li><code>operations.get_alignment()</code> — finds cross-division <code>refs</code> / <code>depends</code> pairs</li>
+<li><code>operations.audit()</code> — finds stale claims and blocked items</li>
+</ul>
+<h3 id="proposed-design">Proposed Design<a class="headerlink" href="#proposed-design" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>swarm heal [--fix] [--depth N]
+</code></pre></div>
+<p><strong>Behavior:</strong>
+1. Run <code>ascend</code> alignment check (local ↔ parent)
+2. Run <code>descend</code> alignment check (local ↔ all children, depth N)
+3. Run <code>audit</code> on local division
+4. Cross-reference: find local items with no parent/child linkage ("orphans")
+5. Find parent/child items that reference this division but have no local counterpart ("dangling refs")
+6. Print a unified health report</p>
+<p><strong>With <code>--fix</code>:</strong>
+- Auto-add missing <code>refs:</code> lines for items that should cross-reference
+- Propose new queue items for dangling external references
+- Update <code>state.md</code> with heal timestamp + summary</p>
+<p><strong>Implementation files:</strong>
+- <code>src/dot_swarm/cli.py</code> — new <code>heal</code> command (~80 lines)
+- <code>src/dot_swarm/operations.py</code> — new <code>heal_report()</code> function (~60 lines)
+- No new dependencies</p>
+<h3 id="oasis-x-alignment">Oasis-X Alignment<a class="headerlink" href="#oasis-x-alignment" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Heal maps directly to the categorical ontology's consistency checking (commutative facts / obstruction detection in <code>CATEGORICAL_ONTOLOGY_ARCHITECTURE.md</code>)</li>
+<li>The Sentinel service's Trigger→Analysis→Reaction pattern is analogous: heal is an Analysis that detects misalignment, with optional Reactions (fix refs, add items)</li>
+<li>Could be scheduled via CI/CD drift check (already exists as <code>swarm setup-drift-check</code>)</li>
+</ul>
+<hr />
+<h2 id="2-ogp-lite-federation-layer-implemented-swc-014">2. OGP-Lite Federation Layer — IMPLEMENTED (SWC-014)<a class="headerlink" href="#2-ogp-lite-federation-layer-implemented-swc-014" title="Permanent link">&para;</a></h2>
+<p><strong>Status</strong>: Complete as of 2026-04-06. 34 tests passing.</p>
+<h3 id="motivation_1">Motivation<a class="headerlink" href="#motivation_1" title="Permanent link">&para;</a></h3>
+<p>OGP (Open Gateway Protocol, by David Proctor / Trilogy AI) defines the right semantics for cross-swarm federation: cryptographic identity, bilateral trust, signed intent messages, controlled boundaries. dot_swarm's git-native philosophy means we implement the <em>protocol semantics</em> without requiring a network gateway.</p>
+<h3 id="ogp-build-learnings-applied">OGP Build Learnings Applied<a class="headerlink" href="#ogp-build-learnings-applied" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>OGP Lesson</th>
+<th>Our Implementation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Identity = key fingerprint, NOT hostname:port</strong></td>
+<td><code>trust_peer()</code> reads <code>fingerprint</code> from stored <code>identity.json</code>; addresses (paths) are treated as mutable</td>
+</tr>
+<tr>
+<td><strong>Never trust the sender's claimed ID</strong></td>
+<td><code>doorman_check()</code> always looks up <code>from_fingerprint</code> from <code>trusted_peers/</code> — never trusts the message body's claim</td>
+</tr>
+<tr>
+<td><strong>Persist before returning success</strong> (addPeer bug)</td>
+<td><code>trust_peer()</code> calls <code>_atomic_write()</code> before <code>return peer</code></td>
+</tr>
+<tr>
+<td><strong>Three-layer scope model</strong></td>
+<td>L1: <code>policy.md</code>, L2: <code>trusted_peers/&lt;fp&gt;.json</code> scopes, L3: <code>doorman_check()</code> at runtime</td>
+</tr>
+<tr>
+<td><strong>HMAC-SHA256 is wrong for cross-party verification</strong></td>
+<td>HMAC-SHA256 retained for local trail signing (correct); Ed25519 documented as the asymmetric upgrade path for full peer-verifiable signatures</td>
+</tr>
+</tbody>
+</table>
+<h3 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>.swarm/federation/
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  trusted_peers/&lt;fingerprint&gt;.json   # Layer 2: per-peer trust + scopes
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  inbox/&lt;ts&gt;_&lt;intent&gt;_&lt;fp8&gt;.json    # inbound signed messages
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  outbox/&lt;ts&gt;_&lt;intent&gt;_&lt;fp8&gt;.json   # outbound signed messages
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>  policy.md                          # Layer 1: global intent policy
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>  exports.md                         # what context this swarm shares
+</code></pre></div>
+<p><strong>Message flow:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>Peer A                                Peer B
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  swarm federation export-id  ──────→  (out-of-band: email/git/Slack)
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>                               ←──────  swarm federation export-id
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>  swarm federation trust B_id.json
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>  swarm federation trust A_id.json     ←── (peer does the same)
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>  swarm federation send &lt;fp&gt; work_request --desc &quot;...&quot;
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    → writes outbox/msg.json
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>  (deliver file to Peer B via git/shared dir)
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>                                         swarm federation inbox
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>                                         swarm federation apply inbox/msg.json
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>                                           → doorman_check() [L1+L2+L3]
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>                                           → add_item() if allowed
+</code></pre></div></p>
+<h3 id="cli-commands">CLI Commands<a class="headerlink" href="#cli-commands" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>swarm federation init                    # create federation/ dirs
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>swarm federation export-id [--out FILE]  # share identity (public, safe to commit)
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>swarm federation trust PEER_IDENTITY.json [--name NAME] [--scopes SCOPES]
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>swarm federation revoke &lt;fingerprint&gt;
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>swarm federation peers
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>swarm federation send &lt;fingerprint&gt; &lt;intent&gt; [--desc TEXT] [--context TEXT]
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>swarm federation inbox
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>swarm federation apply MESSAGE.json [-y]
+</code></pre></div>
+<h3 id="implementation-files">Implementation Files<a class="headerlink" href="#implementation-files" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>src/dot_swarm/federation.py</code> — 280 lines: <code>trust_peer()</code>, <code>doorman_check()</code>, <code>write_outbox()</code>, <code>read_inbox()</code>, <code>apply_inbox_message()</code>, <code>sign_federation_message()</code>, <code>verify_federation_message()</code></li>
+<li><code>src/dot_swarm/cli.py</code> — <code>swarm federation</code> command group (8 subcommands, ~200 lines)</li>
+<li><code>tests/test_federation.py</code> — 34 tests</li>
+<li><code>tests/test_signing.py</code> — 22 tests</li>
+<li><code>tests/test_security.py</code> — 15 tests</li>
+<li><strong>No new dependencies</strong> — stdlib only (hashlib, hmac, json, re)</li>
+</ul>
+<h3 id="oasis-x-alignment_1">Oasis-X Alignment<a class="headerlink" href="#oasis-x-alignment_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>MQ service</strong>: Future upgrade path — federation messages transported over oasis-cloud MQ instead of file exchange</li>
+<li><strong>Auth service</strong>: Federation identity can be tied to Oasis Auth JWT tokens for cross-org authentication</li>
+<li><strong>Sentinel service</strong>: Sentinels could watch <code>federation/inbox/</code> and auto-react (Trigger: new inbox message → Analysis: parse intent → Reaction: <code>add_item()</code> or notify)</li>
+</ul>
+<h3 id="ogp-full-upgrade-path">OGP Full Upgrade Path<a class="headerlink" href="#ogp-full-upgrade-path" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Now (OGP-lite)</th>
+<th>Full OGP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Identity via <code>export-id</code> (manual exchange)</td>
+<td>Ed25519 public key, DNS-discoverable</td>
+</tr>
+<tr>
+<td>Transport: git/file</td>
+<td>HTTP/gRPC gateway</td>
+</tr>
+<tr>
+<td>HMAC-SHA256 local trail signing</td>
+<td>Ed25519 asymmetric (peers verify independently)</td>
+</tr>
+<tr>
+<td><code>trusted_peers/</code> files</td>
+<td>Bilateral gateway handshake</td>
+</tr>
+<tr>
+<td>Manual <code>apply</code></td>
+<td>Doorman auto-applies with approval UX</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outreach</strong>: <code>.drafts/trilogy_outreach.txt</code> proposes a transport-agnostic federation profile spec to Trilogy AI so dot_swarm and OGP can remain aligned on identity and intent schema standards.</p>
+<hr />
+<h2 id="3-task-scheduling-agentcomputational-composition-implemented-swc-013">3. Task Scheduling &amp; Agent/Computational Composition — IMPLEMENTED (SWC-013)<a class="headerlink" href="#3-task-scheduling-agentcomputational-composition-implemented-swc-013" title="Permanent link">&para;</a></h2>
+<p><strong>Status</strong>: Complete as of 2026-04-06. 63 tests passing (38 scheduler + 25 workflow).</p>
+<h3 id="motivation_2">Motivation<a class="headerlink" href="#motivation_2" title="Permanent link">&para;</a></h3>
+<p>Add time-driven and event-driven automation so agents can chain work without manual intervention. Aligned with swarms.ai orchestration patterns.</p>
+<h3 id="design-decisions">Design Decisions<a class="headerlink" href="#design-decisions" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Decision</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>No daemon</td>
+<td>Cron-style: <code>swarm schedule run-due</code> called by system crontab — simpler, no background process</td>
+</tr>
+<tr>
+<td>Stdlib cron evaluator</td>
+<td>No <code>croniter</code> dependency; custom 5-field parser handles <code>*</code>, <code>*/N</code>, <code>a-b</code>, <code>a,b</code>, <code>a-b/N</code></td>
+</tr>
+<tr>
+<td>Markdown-native storage</td>
+<td><code>schedules.md</code> + <code>workflows/*.md</code> — same pattern as queue.md, readable by any agent</td>
+</tr>
+<tr>
+<td>Sequential halt on failure</td>
+<td>Downstream steps skip with <code>skip_reason</code> in run log — preserves audit trail</td>
+</tr>
+<tr>
+<td><code>workflow_runs.jsonl</code></td>
+<td>Append-only run log; <code>workflow status</code> reads last entry per name</td>
+</tr>
+</tbody>
+</table>
+<h3 id="scheduler-schedulerpy">Scheduler (<code>scheduler.py</code>)<a class="headerlink" href="#scheduler-schedulerpy" title="Permanent link">&para;</a></h3>
+<p><strong>Schedule types:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Spec</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cron</code></td>
+<td>5-field expression</td>
+<td><code>0 */6 * * *</code></td>
+</tr>
+<tr>
+<td><code>interval</code></td>
+<td><code>Nm</code>/<code>Nh</code>/<code>Nd</code></td>
+<td><code>6h</code>, <code>30m</code>, <code>2d</code></td>
+</tr>
+<tr>
+<td><code>on:done</code></td>
+<td><code>on:done ITEM-ID</code></td>
+<td><code>on:done CLD-042</code></td>
+</tr>
+<tr>
+<td><code>on:blocked</code></td>
+<td><code>on:blocked ITEM-ID</code></td>
+<td><code>on:blocked CLD-001</code></td>
+</tr>
+</tbody>
+</table>
+<p>Event-driven schedules (<code>on:done</code>, <code>on:blocked</code>) are never fired by <code>run-due</code> — they are dispatched by <code>get_event_triggers()</code> which should be called from the <code>done</code>/<code>block</code> operation hooks (future integration point).</p>
+<h3 id="workflows-workflowspy">Workflows (<code>workflows.py</code>)<a class="headerlink" href="#workflows-workflowspy" title="Permanent link">&para;</a></h3>
+<p>Workflow files live in <code>.swarm/workflows/*.md</code> (already in <code>SwarmPaths</code>):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>---
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>trigger: on:done CLD-041
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>pattern: sequential
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="gu">description: OAuth2 integration sequence</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="gu">---</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="gu">## Steps</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="k">1.</span> swarm claim CLD-042
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>   agent: bedrock
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>   timeout: 30
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="k">2.</span> swarm claim CLD-043
+<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>   agent: claude
+<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>   depends: CLD-042
+<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>   timeout: 45
+<a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a>   if: step1.ok
+</code></pre></div>
+<p><strong>Execution patterns:</strong> <code>sequential</code> (halt on failure), <code>concurrent</code> (parallel threads), <code>conditional</code> (if-guarded steps), <code>mixture</code> (concurrent + agent diversity).</p>
+<h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>swarm schedule list / add / remove / run / run-due
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>swarm workflow list / show / create / run / status
+</code></pre></div>
+<h3 id="implementation-files_1">Implementation Files<a class="headerlink" href="#implementation-files_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>src/dot_swarm/scheduler.py</code> — 250 lines: <code>Schedule</code>, <code>add_schedule()</code>, <code>is_due()</code>, <code>_cron_is_due()</code>, <code>run_due()</code>, <code>get_event_triggers()</code></li>
+<li><code>src/dot_swarm/workflows.py</code> — 300 lines: <code>Workflow</code>, <code>WorkflowStep</code>, <code>run_workflow()</code>, <code>_run_sequential()</code>, <code>_run_concurrent()</code>, <code>_eval_condition()</code>, <code>workflow_status()</code></li>
+<li><code>src/dot_swarm/cli.py</code> — <code>swarm schedule</code> + <code>swarm workflow</code> groups (12 subcommands, ~300 lines)</li>
+<li><code>tests/test_scheduler.py</code> — 38 tests</li>
+<li><code>tests/test_workflows.py</code> — 25 tests</li>
+<li><strong>No new dependencies</strong> — stdlib only</li>
+</ul>
+<h3 id="oasis-x-alignment_2">Oasis-X Alignment<a class="headerlink" href="#oasis-x-alignment_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Sentinel service</strong>: <code>[cron]</code> schedule ↔ Sentinel <code>trigger_type: cron</code>; workflow step <code>command</code> ↔ <code>analysis_type</code>; step <code>agent:</code> ↔ <code>reaction_type</code></li>
+<li><strong>oasis-workers (ORG-021)</strong>: dot_swarm workflows become the coordination layer for oasis-workers dispatch</li>
+<li><strong>oasis-ai (ORG-020)</strong>: Workflow steps with <code>agent: bedrock</code> / <code>agent: claude</code> dispatch to the oasis-ai MCP server</li>
+</ul>
+<hr />
+<h2 id="4-swarmsai-integration-pr-proposal-implemented-swc-015">4. swarms.ai Integration &amp; PR Proposal — IMPLEMENTED (SWC-015)<a class="headerlink" href="#4-swarmsai-integration-pr-proposal-implemented-swc-015" title="Permanent link">&para;</a></h2>
+<p><strong>Status</strong>: Complete as of 2026-04-06. 33 tests passing. PR guide at <code>docs/SWARMS_AI_PR_GUIDE.md</code>.</p>
+<h3 id="intersection-analysis-updated">Intersection Analysis (updated)<a class="headerlink" href="#intersection-analysis-updated" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>swarms.ai Concept</th>
+<th>dot_swarm Equivalent</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Agent</code> (LLM wrapper)</td>
+<td><code>swarm ai</code> + <code>DotSwarmStateProvider</code></td>
+<td>✓ Done — provider injects <code>.swarm/</code> context into any agent</td>
+</tr>
+<tr>
+<td><code>SequentialWorkflow</code></td>
+<td><code>DotSwarmWorkflow</code> <code>pattern: sequential</code></td>
+<td>✓ Done — markdown-native, 195 tests pass</td>
+</tr>
+<tr>
+<td><code>ConcurrentWorkflow</code></td>
+<td><code>DotSwarmWorkflow</code> <code>pattern: concurrent</code></td>
+<td>✓ Done — parallel threading</td>
+</tr>
+<tr>
+<td><code>MixtureOfAgents</code></td>
+<td><code>DotSwarmWorkflow</code> <code>pattern: mixture</code></td>
+<td>✓ Done — concurrent + per-step <code>agent:</code> routing</td>
+</tr>
+<tr>
+<td><code>AgentRearrange</code></td>
+<td><code>swarm heal --fix</code></td>
+<td>✓ Done</td>
+</tr>
+<tr>
+<td><code>SwarmRouter</code></td>
+<td><code>swarm configure --via</code></td>
+<td>✓ Done</td>
+</tr>
+<tr>
+<td><code>AOP</code> (Agent Orchestration Protocol)</td>
+<td>OGP-lite federation</td>
+<td>✓ Done — different transport, same semantics</td>
+</tr>
+<tr>
+<td><code>SocialAlgorithms</code></td>
+<td><code>StigmergicSwarm</code></td>
+<td>✓ Done — indirect coordination</td>
+</tr>
+<tr>
+<td>State persistence</td>
+<td><code>.swarm/</code> directory</td>
+<td>✓ Done — fills swarms.ai gap</td>
+</tr>
+<tr>
+<td>Git audit trail</td>
+<td><code>swarm audit --trail</code></td>
+<td>✓ Done — fills swarms.ai gap</td>
+</tr>
+</tbody>
+</table>
+<h3 id="pr-deliverables-all-in-srcdot_swarmswarms_providerpy">PR Deliverables (all in <code>src/dot_swarm/swarms_provider.py</code>)<a class="headerlink" href="#pr-deliverables-all-in-srcdot_swarmswarms_providerpy" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Standalone?</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DotSwarmStateProvider</code></td>
+<td>Yes</td>
+<td>Reads <code>.swarm/</code> → system prompt injection; applies AI JSON ops back</td>
+</tr>
+<tr>
+<td><code>DotSwarmWorkflow</code></td>
+<td>Yes (swarms.ai optional)</td>
+<td>Loads <code>.swarm/workflows/*.md</code>; routes steps to registered agents</td>
+</tr>
+<tr>
+<td><code>DotSwarmTool</code></td>
+<td>Yes</td>
+<td>Callable tool interface: <code>status/claim/done/add/memory/heal</code></td>
+</tr>
+<tr>
+<td><code>StigmergicSwarm</code></td>
+<td>No (requires swarms)</td>
+<td>Novel indirect coordination via <code>.swarm/</code> shared state</td>
+</tr>
+</tbody>
+</table>
+<h3 id="test-coverage">Test Coverage<a class="headerlink" href="#test-coverage" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>tests/test_swarms_provider.py</code> — 33 tests (all standalone, no <code>swarms</code> dep required)</li>
+<li>Full PR guide: <code>docs/SWARMS_AI_PR_GUIDE.md</code></li>
+<li>Proposed PR location: <code>swarms/integrations/dot_swarm/</code></li>
+</ul>
+<hr />
+<h2 id="implementation-phases">Implementation Phases<a class="headerlink" href="#implementation-phases" title="Permanent link">&para;</a></h2>
+<h3 id="phase-1-swarm-heal-1-2-days">Phase 1: <code>swarm heal</code> (1-2 days)<a class="headerlink" href="#phase-1-swarm-heal-1-2-days" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] Implement <code>heal_report()</code> in <code>operations.py</code></li>
+<li>[ ] Add <code>heal</code> CLI command</li>
+<li>[ ] Add <code>--fix</code> auto-correction mode</li>
+<li>[ ] Tests for alignment gap detection</li>
+<li>[ ] Update ARCHITECTURE.md</li>
+</ul>
+<h3 id="phase-2-task-scheduling-workflows-3-5-days">Phase 2: Task Scheduling &amp; Workflows (3-5 days)<a class="headerlink" href="#phase-2-task-scheduling-workflows-3-5-days" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] Define <code>schedules.md</code> format spec</li>
+<li>[ ] Implement <code>scheduler.py</code> (cron parsing, trigger dispatch)</li>
+<li>[ ] Define workflow markdown format spec</li>
+<li>[ ] Implement <code>workflows.py</code> (step parsing, sequential execution)</li>
+<li>[ ] Add CLI commands (<code>schedule</code>, <code>workflow</code>)</li>
+<li>[ ] Add MCP tools</li>
+<li>[ ] Tests for schedule evaluation and workflow execution</li>
+</ul>
+<h3 id="phase-3-ogp-lite-federation-3-5-days">Phase 3: OGP-Lite Federation (3-5 days)<a class="headerlink" href="#phase-3-ogp-lite-federation-3-5-days" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] Implement <code>federation.py</code> (identity, signing, inbox/outbox)</li>
+<li>[ ] Add <code>federation</code> CLI command group</li>
+<li>[ ] Add MCP tools</li>
+<li>[ ] Define federation message format spec</li>
+<li>[ ] Tests for signing/verification roundtrip</li>
+<li>[ ] Document federation protocol in ARCHITECTURE.md</li>
+</ul>
+<h3 id="phase-4-swarmsai-pr-5-7-days">Phase 4: swarms.ai PR (5-7 days)<a class="headerlink" href="#phase-4-swarmsai-pr-5-7-days" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] Implement <code>DotSwarmStateProvider</code></li>
+<li>[ ] Implement <code>DotSwarmWorkflow</code> adapter</li>
+<li>[ ] Implement <code>DotSwarmTool</code></li>
+<li>[ ] Implement <code>StigmergicSwarm</code> architecture</li>
+<li>[ ] Write tests compatible with swarms.ai test suite</li>
+<li>[ ] Write documentation for swarms.ai docs site</li>
+<li>[ ] Open PR with description and examples</li>
+</ul>
+<hr />
+<h2 id="oasis-x-service-intersection-map">Oasis-X Service Intersection Map<a class="headerlink" href="#oasis-x-service-intersection-map" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>┌─────────────────────────────────────────────────────────────────────┐
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>│                        dot_swarm (coordination layer)                │
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>│  ┌──────────┐  ┌───────────┐  ┌────────────┐  ┌────────────────┐  │
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>│  │ swarm    │  │ schedules │  │ workflows  │  │ federation     │  │
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>│  │ heal     │  │ &amp; cron    │  │ sequential │  │ OGP-lite       │  │
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>│  │          │  │           │  │ concurrent │  │ identity+trust │  │
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>│  └────┬─────┘  └─────┬─────┘  └──────┬─────┘  └───────┬────────┘  │
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>│       │              │               │                 │           │
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>└───────┼──────────────┼───────────────┼─────────────────┼───────────┘
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>        │              │               │                 │
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>        ▼              ▼               ▼                 ▼
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>┌───────────────────────────────────────────────────────────────────┐
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>│                    oasis-cloud services                            │
+<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>│                                                                    │
+<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐            │
+<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>│  │ Sentinel     │  │ AI Service   │  │ MQ Service   │            │
+<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a>│  │ ─────────── │  │ ──────────── │  │ ──────────── │            │
+<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>│  │ Trigger→     │  │ Bedrock      │  │ MQTT pub/sub │            │
+<a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a>│  │ Analysis→    │  │ inference    │  │ event-driven │            │
+<a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a>│  │ Reaction     │  │ token tiers  │  │ communication│            │
+<a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a>│  │              │  │              │  │              │            │
+<a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a>│  │ ↕ heal maps  │  │ ↕ workflows  │  │ ↕ federation │            │
+<a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a>│  │   to ontology│  │   dispatch   │  │   transport  │            │
+<a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a>│  │   consistency│  │   to AI svc  │  │   upgrade    │            │
+<a id="__codelineno-7-25" name="__codelineno-7-25" href="#__codelineno-7-25"></a>│  └──────────────┘  └──────────────┘  └──────────────┘            │
+<a id="__codelineno-7-26" name="__codelineno-7-26" href="#__codelineno-7-26"></a>│                                                                    │
+<a id="__codelineno-7-27" name="__codelineno-7-27" href="#__codelineno-7-27"></a>│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐            │
+<a id="__codelineno-7-28" name="__codelineno-7-28" href="#__codelineno-7-28"></a>│  │ Data Service │  │ Auth Service │  │ oasis-workers│            │
+<a id="__codelineno-7-29" name="__codelineno-7-29" href="#__codelineno-7-29"></a>│  │ ──────────── │  │ ──────────── │  │ (ORG-021)    │            │
+<a id="__codelineno-7-30" name="__codelineno-7-30" href="#__codelineno-7-30"></a>│  │ Collections  │  │ JWT tokens   │  │ ──────────── │            │
+<a id="__codelineno-7-31" name="__codelineno-7-31" href="#__codelineno-7-31"></a>│  │ Sources      │  │ RBAC         │  │ Generalized  │            │
+<a id="__codelineno-7-32" name="__codelineno-7-32" href="#__codelineno-7-32"></a>│  │ Measurements │  │              │  │ agent/worker │            │
+<a id="__codelineno-7-33" name="__codelineno-7-33" href="#__codelineno-7-33"></a>│  │              │  │ ↕ federation │  │ code          │            │
+<a id="__codelineno-7-34" name="__codelineno-7-34" href="#__codelineno-7-34"></a>│  │ ↕ categorical│  │   identity   │  │              │            │
+<a id="__codelineno-7-35" name="__codelineno-7-35" href="#__codelineno-7-35"></a>│  │   ontology   │  │   binding    │  │ ↕ dot_swarm  │            │
+<a id="__codelineno-7-36" name="__codelineno-7-36" href="#__codelineno-7-36"></a>│  │   backing    │  │              │  │   workflows  │            │
+<a id="__codelineno-7-37" name="__codelineno-7-37" href="#__codelineno-7-37"></a>│  └──────────────┘  └──────────────┘  └──────────────┘            │
+<a id="__codelineno-7-38" name="__codelineno-7-38" href="#__codelineno-7-38"></a>└───────────────────────────────────────────────────────────────────┘
+<a id="__codelineno-7-39" name="__codelineno-7-39" href="#__codelineno-7-39"></a>        │
+<a id="__codelineno-7-40" name="__codelineno-7-40" href="#__codelineno-7-40"></a>        ▼
+<a id="__codelineno-7-41" name="__codelineno-7-41" href="#__codelineno-7-41"></a>┌───────────────────────────────────────────────────────────────────┐
+<a id="__codelineno-7-42" name="__codelineno-7-42" href="#__codelineno-7-42"></a>│                    swarms.ai (external FOSS)                      │
+<a id="__codelineno-7-43" name="__codelineno-7-43" href="#__codelineno-7-43"></a>│                                                                    │
+<a id="__codelineno-7-44" name="__codelineno-7-44" href="#__codelineno-7-44"></a>│  DotSwarmStateProvider  → persistent state for swarms.ai agents   │
+<a id="__codelineno-7-45" name="__codelineno-7-45" href="#__codelineno-7-45"></a>│  DotSwarmWorkflow       → markdown→SequentialWorkflow adapter     │
+<a id="__codelineno-7-46" name="__codelineno-7-46" href="#__codelineno-7-46"></a>│  DotSwarmTool           → MCP tool for .swarm/ operations         │
+<a id="__codelineno-7-47" name="__codelineno-7-47" href="#__codelineno-7-47"></a>│  StigmergicSwarm        → novel coordination architecture         │
+<a id="__codelineno-7-48" name="__codelineno-7-48" href="#__codelineno-7-48"></a>└───────────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<hr />
+<h2 id="open-questions-for-review">Open Questions for Review<a class="headerlink" href="#open-questions-for-review" title="Permanent link">&para;</a></h2>
+<ol>
+<li>
+<p><strong>Federation signing</strong>: Use <code>PyNaCl</code> (ed25519, proper crypto) or <code>hashlib</code> HMAC (simpler, stdlib-only)? PyNaCl is more aligned with real OGP but adds a dependency.</p>
+</li>
+<li>
+<p><strong>Scheduler execution</strong>: Should schedules be evaluated by a long-running daemon (<code>swarm scheduler start</code>) or by a cron job that calls <code>swarm schedule tick</code>? The daemon approach is more responsive but requires process management; the cron approach is simpler and more unix-native.</p>
+</li>
+<li>
+<p><strong>Workflow agents</strong>: When a workflow step says <code>agent: bedrock</code>, should it use <code>swarm ai</code> (existing CLI) or directly invoke the LLM? Using <code>swarm ai</code> keeps everything in the dot_swarm protocol but adds overhead.</p>
+</li>
+<li>
+<p><strong>swarms.ai PR scope</strong>: Start with just <code>DotSwarmStateProvider</code> (smallest useful contribution) or go for the full <code>StigmergicSwarm</code> (more ambitious, higher impact)?</p>
+</li>
+<li>
+<p><strong>Phase ordering</strong>: The plan orders phases by complexity. Should we instead prioritize based on Oasis-X roadmap alignment (e.g., federation first because of oasis-workers)?</p>
+</li>
+</ol>
+<hr />
+<h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
+<p>After this plan is reviewed, edited, and approved:
+1. Update <code>.swarm/queue.md</code> with implementation work items
+2. Update <code>.swarm/state.md</code> with new focus
+3. Begin Phase 1 implementation (<code>swarm heal</code>)</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

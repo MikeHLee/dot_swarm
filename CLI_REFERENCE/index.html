@@ -1,0 +1,2692 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Minimal, git-native, markdown-first agent orchestration for multi-repo organizations.">
+      
+      
+      
+        <link rel="canonical" href="https://mikehlee.github.io/SwarmCity/CLI_REFERENCE/">
+      
+      
+        <link rel="prev" href="../DRIFT_CHECK_SETUP/">
+      
+      
+        <link rel="next" href="../ARCHITECTURE/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>CLI Reference - SwarmCity</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#cli-reference" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="SwarmCity" class="md-header__button md-logo" aria-label="SwarmCity" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            SwarmCity
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              CLI Reference
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/MikeHLee/SwarmCity" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    MikeHLee/SwarmCity
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="SwarmCity" class="md-nav__button md-logo" aria-label="SwarmCity" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    SwarmCity
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/MikeHLee/SwarmCity" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    MikeHLee/SwarmCity
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PLATFORM_SETUP/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DRIFT_CHECK_SETUP/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Drift Check
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#global-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Global Options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#initialization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Initialization
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Initialization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#swarm-init" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm init
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#situational-awareness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Situational Awareness
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Situational Awareness">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#swarm-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm status
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-ls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm ls
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-explore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm explore
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-report" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm report
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#work-item-lifecycle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Work Item Lifecycle
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Work Item Lifecycle">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#swarm-add" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm add
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-claim" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm claim
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-done" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm done
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-partial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm partial
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-block" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm block
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-unblock" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm unblock
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#memory-audit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Memory &amp; Audit
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Memory &amp; Audit">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#swarm-audit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm audit
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-heal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm heal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-handoff" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm handoff
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#federation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Federation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Federation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#swarm-federation-init" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm federation init
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-federation-export-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm federation export-id
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-federation-trust" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm federation trust
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-federation-revoke" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm federation revoke
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-federation-peers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm federation peers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-federation-send" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm federation send
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-federation-inbox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm federation inbox
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-federation-apply" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm federation apply
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#federation-policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Federation Policy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upgrade-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Upgrade Path
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scheduling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scheduling
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scheduling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#swarm-schedule-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm schedule list
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-schedule-add" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm schedule add
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-schedule-remove" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm schedule remove
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-schedule-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm schedule run
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-schedule-run-due" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm schedule run-due
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#workflows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Workflows
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Workflows">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#swarm-workflow-create" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm workflow create
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-workflow-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm workflow list
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-workflow-show" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm workflow show
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-workflow-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm workflow run
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-workflow-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm workflow status
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ai-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI Interface
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="AI Interface">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#swarm-ai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm ai
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm session
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-configure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm configure
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setup-ci" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setup &amp; CI
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Setup &amp; CI">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#swarm-setup-drift-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm setup-drift-check
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#item-id-convention" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Item ID Convention
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#security-trust-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security &amp; Trust Model
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Security &amp; Trust Model">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pheromone-trail-signing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pheromone Trail Signing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adversarial-content-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adversarial Content Detection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarmsai-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarms.ai Integration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ARCHITECTURE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture & Internals
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../INTEGRATION_PLAN/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Integration Plan
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    swarms.ai Integration
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    swarms.ai Integration
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../SWARMS_AI_PR_GUIDE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PR Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CREDITS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Credits & Inspiration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#global-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Global Options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#initialization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Initialization
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Initialization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#swarm-init" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm init
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#situational-awareness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Situational Awareness
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Situational Awareness">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#swarm-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm status
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-ls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm ls
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-explore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm explore
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-report" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm report
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#work-item-lifecycle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Work Item Lifecycle
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Work Item Lifecycle">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#swarm-add" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm add
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-claim" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm claim
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-done" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm done
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-partial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm partial
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-block" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm block
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-unblock" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm unblock
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#memory-audit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Memory &amp; Audit
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Memory &amp; Audit">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#swarm-audit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm audit
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-heal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm heal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-handoff" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm handoff
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#federation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Federation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Federation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#swarm-federation-init" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm federation init
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-federation-export-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm federation export-id
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-federation-trust" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm federation trust
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-federation-revoke" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm federation revoke
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-federation-peers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm federation peers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-federation-send" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm federation send
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-federation-inbox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm federation inbox
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-federation-apply" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm federation apply
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#federation-policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Federation Policy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upgrade-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Upgrade Path
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scheduling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scheduling
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scheduling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#swarm-schedule-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm schedule list
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-schedule-add" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm schedule add
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-schedule-remove" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm schedule remove
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-schedule-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm schedule run
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-schedule-run-due" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm schedule run-due
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#workflows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Workflows
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Workflows">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#swarm-workflow-create" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm workflow create
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-workflow-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm workflow list
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-workflow-show" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm workflow show
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-workflow-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm workflow run
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-workflow-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm workflow status
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ai-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI Interface
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="AI Interface">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#swarm-ai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm ai
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm session
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarm-configure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm configure
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setup-ci" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setup &amp; CI
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Setup &amp; CI">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#swarm-setup-drift-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarm setup-drift-check
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#item-id-convention" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Item ID Convention
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#security-trust-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security &amp; Trust Model
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Security &amp; Trust Model">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pheromone-trail-signing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pheromone Trail Signing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adversarial-content-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adversarial Content Detection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#swarmsai-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        swarms.ai Integration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="cli-reference">CLI Reference<a class="headerlink" href="#cli-reference" title="Permanent link">&para;</a></h1>
+<p><code>swarm</code> is installed as a standalone command via <code>pip install dot-swarm</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>dot-swarm<span class="w">           </span><span class="c1"># base CLI</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;dot-swarm[ai]&#39;</span><span class="w">     </span><span class="c1"># + AWS Bedrock support (boto3)</span>
+</code></pre></div>
+<hr />
+<h2 id="global-options">Global Options<a class="headerlink" href="#global-options" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--path PATH</code></td>
+<td><code>.</code> (cwd)</td>
+<td>Root path to search for <code>.swarm/</code> directory</td>
+</tr>
+<tr>
+<td><code>--version</code></td>
+<td>—</td>
+<td>Print version and exit</td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>—</td>
+<td>Show help</td>
+</tr>
+</tbody>
+</table>
+<p>All commands inherit <code>--path</code>. Example: <code>swarm --path ../oasis-cloud status</code></p>
+<hr />
+<h2 id="initialization">Initialization<a class="headerlink" href="#initialization" title="Permanent link">&para;</a></h2>
+<h3 id="swarm-init"><code>swarm init</code><a class="headerlink" href="#swarm-init" title="Permanent link">&para;</a></h3>
+<p>Initialize a <code>.swarm/</code> directory in the current repo.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>swarm<span class="w"> </span>init<span class="w">                   </span><span class="c1"># auto-detect org vs division level</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>swarm<span class="w"> </span>init<span class="w"> </span>--level<span class="w"> </span>org<span class="w">       </span><span class="c1"># force org level (ORG- item IDs)</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>swarm<span class="w"> </span>init<span class="w"> </span>--level<span class="w"> </span>division<span class="w">  </span><span class="c1"># force division level</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>swarm<span class="w"> </span>init<span class="w"> </span>--code<span class="w"> </span>CLD<span class="w">        </span><span class="c1"># set division code (default: derived from folder name)</span>
+</code></pre></div>
+<p>Creates: <code>BOOTSTRAP.md</code>, <code>context.md</code>, <code>state.md</code>, <code>queue.md</code>, <code>memory.md</code></p>
+<hr />
+<h2 id="situational-awareness">Situational Awareness<a class="headerlink" href="#situational-awareness" title="Permanent link">&para;</a></h2>
+<h3 id="swarm-status"><code>swarm status</code><a class="headerlink" href="#swarm-status" title="Permanent link">&para;</a></h3>
+<p>Print current state and active/pending queue items for this division.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>swarm<span class="w"> </span>status<span class="w">          </span><span class="c1"># active + pending items only</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>swarm<span class="w"> </span>status<span class="w"> </span>--all<span class="w">    </span><span class="c1"># include done items</span>
+</code></pre></div>
+<h3 id="swarm-ls"><code>swarm ls</code><a class="headerlink" href="#swarm-ls" title="Permanent link">&para;</a></h3>
+<p>List queue items with filtering.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>swarm<span class="w"> </span>ls<span class="w">                            </span><span class="c1"># all items</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>swarm<span class="w"> </span>ls<span class="w"> </span>--section<span class="w"> </span>active<span class="w">           </span><span class="c1"># active only</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>swarm<span class="w"> </span>ls<span class="w"> </span>--section<span class="w"> </span>pending<span class="w">          </span><span class="c1"># pending only</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>swarm<span class="w"> </span>ls<span class="w"> </span>--priority<span class="w"> </span>high<span class="w">            </span><span class="c1"># filter by priority</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>swarm<span class="w"> </span>ls<span class="w"> </span>--project<span class="w"> </span>cloud-stability<span class="w">  </span><span class="c1"># filter by project tag</span>
+</code></pre></div>
+<h3 id="swarm-explore"><code>swarm explore</code><a class="headerlink" href="#swarm-explore" title="Permanent link">&para;</a></h3>
+<p>Show the heartbeat of all divisions in the colony. Recursively discovers <code>.swarm/</code> directories.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>swarm<span class="w"> </span>explore<span class="w">                       </span><span class="c1"># from current directory, depth 2</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>swarm<span class="w"> </span>explore<span class="w"> </span>--depth<span class="w"> </span><span class="m">3</span><span class="w">             </span><span class="c1"># search deeper</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>swarm<span class="w"> </span>--path<span class="w"> </span>~/org<span class="w"> </span>explore<span class="w">          </span><span class="c1"># from org root</span>
+</code></pre></div>
+<h3 id="swarm-report"><code>swarm report</code><a class="headerlink" href="#swarm-report" title="Permanent link">&para;</a></h3>
+<p>Generate a full markdown report of all divisions. Unlike <code>explore</code>, outputs a complete
+document suitable for sharing, filing as a GitHub issue, or posting to a wiki.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>swarm<span class="w"> </span>report<span class="w">                        </span><span class="c1"># print to stdout</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>swarm<span class="w"> </span>report<span class="w"> </span>--out<span class="w"> </span>REPORT.md<span class="w">        </span><span class="c1"># write to file</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>swarm<span class="w"> </span>report<span class="w"> </span>--only<span class="w"> </span>active<span class="w">          </span><span class="c1"># active items only</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>swarm<span class="w"> </span>report<span class="w"> </span>--no-done<span class="w">              </span><span class="c1"># skip done sections</span>
+</code></pre></div>
+<hr />
+<h2 id="work-item-lifecycle">Work Item Lifecycle<a class="headerlink" href="#work-item-lifecycle" title="Permanent link">&para;</a></h2>
+<h3 id="swarm-add"><code>swarm add</code><a class="headerlink" href="#swarm-add" title="Permanent link">&para;</a></h3>
+<p>Add a new work item to the Pending queue.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>swarm<span class="w"> </span>add<span class="w"> </span><span class="s2">&quot;Add request ID tracing to all services&quot;</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>swarm<span class="w"> </span>add<span class="w"> </span><span class="s2">&quot;Fix Redis timeout&quot;</span><span class="w"> </span>--priority<span class="w"> </span>high<span class="w"> </span>--project<span class="w"> </span>infra
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>swarm<span class="w"> </span>add<span class="w"> </span><span class="s2">&quot;OAuth2 discovery&quot;</span><span class="w"> </span>--notes<span class="w"> </span><span class="s2">&quot;See RFC 8414 for discovery spec&quot;</span>
+</code></pre></div>
+<p>Options: <code>--priority [low|medium|high|critical]</code>, <code>--project TEXT</code>, <code>--notes TEXT</code></p>
+<h3 id="swarm-claim"><code>swarm claim</code><a class="headerlink" href="#swarm-claim" title="Permanent link">&para;</a></h3>
+<p>Claim an item (move Active, stamp with agent ID + timestamp).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>swarm<span class="w"> </span>claim<span class="w"> </span>CLD-042
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>swarm<span class="w"> </span>claim<span class="w"> </span>CLD-042<span class="w"> </span>--agent<span class="w"> </span>my-agent-id
+</code></pre></div>
+<h3 id="swarm-done"><code>swarm done</code><a class="headerlink" href="#swarm-done" title="Permanent link">&para;</a></h3>
+<p>Mark a claimed item as done.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>swarm<span class="w"> </span><span class="k">done</span><span class="w"> </span>CLD-042
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>swarm<span class="w"> </span><span class="k">done</span><span class="w"> </span>CLD-042<span class="w"> </span>--note<span class="w"> </span><span class="s2">&quot;Used converse API instead of invoke-model&quot;</span>
+</code></pre></div>
+<h3 id="swarm-partial"><code>swarm partial</code><a class="headerlink" href="#swarm-partial" title="Permanent link">&para;</a></h3>
+<p>Checkpoint progress on a claimed item without marking it done. Updates the item's
+in-progress note and refreshes the claim timestamp.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>swarm<span class="w"> </span>partial<span class="w"> </span>CLD-042<span class="w"> </span><span class="s2">&quot;Auth header parsing done, token validation next&quot;</span>
+</code></pre></div>
+<h3 id="swarm-block"><code>swarm block</code><a class="headerlink" href="#swarm-block" title="Permanent link">&para;</a></h3>
+<p>Mark a claimed item as blocked.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>swarm<span class="w"> </span>block<span class="w"> </span>CLD-042<span class="w"> </span><span class="s2">&quot;Waiting for staging DB credentials from ops&quot;</span>
+</code></pre></div>
+<h3 id="swarm-unblock"><code>swarm unblock</code><a class="headerlink" href="#swarm-unblock" title="Permanent link">&para;</a></h3>
+<p>Clear a blocked item back to Open (or back to Claimed if an agent is specified).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>swarm<span class="w"> </span>unblock<span class="w"> </span>CLD-042<span class="w">                  </span><span class="c1"># → OPEN</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>swarm<span class="w"> </span>unblock<span class="w"> </span>CLD-042<span class="w"> </span>--reclaim<span class="w">        </span><span class="c1"># → re-CLAIMED by current agent</span>
+</code></pre></div>
+<hr />
+<h2 id="memory-audit">Memory &amp; Audit<a class="headerlink" href="#memory-audit" title="Permanent link">&para;</a></h2>
+<h3 id="swarm-audit"><code>swarm audit</code><a class="headerlink" href="#swarm-audit" title="Permanent link">&para;</a></h3>
+<p>Check for drift: stale claims, blocked items, pending items, security scan, and AI-powered code-vs-docs drift check.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>swarm<span class="w"> </span>audit<span class="w">                  </span><span class="c1"># Basic: stale claims + blocked items (always shown)</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>swarm<span class="w"> </span>audit<span class="w"> </span>--pending<span class="w">        </span><span class="c1"># Also list all pending items</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>swarm<span class="w"> </span>audit<span class="w"> </span>--security<span class="w">       </span><span class="c1"># Add adversarial content scan of .swarm/ files</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>swarm<span class="w"> </span>audit<span class="w"> </span>--drift<span class="w">          </span><span class="c1"># Add AI code-vs-docs drift check (requires LLM backend)</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>swarm<span class="w"> </span>audit<span class="w"> </span>--trail<span class="w">          </span><span class="c1"># Verify pheromone trail HMAC signatures</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>swarm<span class="w"> </span>audit<span class="w"> </span>--full<span class="w">           </span><span class="c1"># All of the above</span>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>swarm<span class="w"> </span>audit<span class="w"> </span>--since<span class="w"> </span><span class="m">24</span><span class="w">       </span><span class="c1"># Stale threshold in hours (default: 48)</span>
+</code></pre></div>
+<p><strong><code>--security</code></strong> scans <code>.swarm/</code> markdown files and platform shims (CLAUDE.md, .windsurfrules, .cursorrules) for:
+- <code>CRITICAL</code>: Prompt injection, instruction erasure, persona hijacking, jailbreaks, LLM template injection
+- <code>HIGH</code>: Non-disclosure directives, hidden instructions, control characters, priority manipulation
+- <code>MEDIUM</code>: Hidden HTML/markdown comments, HTML injection, code injection</p>
+<p><strong><code>--drift</code></strong> runs the same AI analysis as the GitHub Actions drift-check workflow, locally. Compares the last 5 commits against <code>.swarm/</code> state to detect misalignment.</p>
+<p><strong><code>--trail</code></strong> re-verifies every HMAC-SHA256 signature in <code>trail.log</code>. Tampered entries are flagged with the agent fingerprint responsible.</p>
+<h3 id="swarm-heal"><code>swarm heal</code><a class="headerlink" href="#swarm-heal" title="Permanent link">&para;</a></h3>
+<p>Full health pass: alignment + security scan + trail verification. Runs everything in sequence and logs all security findings to <code>memory.md</code> (findings are never silently swallowed).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>swarm<span class="w"> </span>heal<span class="w">                   </span><span class="c1"># Read-only health check</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>swarm<span class="w"> </span>heal<span class="w"> </span>--fix<span class="w">             </span><span class="c1"># Quarantine adversarial content + block tampered trail signers</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>swarm<span class="w"> </span>heal<span class="w"> </span>--depth<span class="w"> </span><span class="m">2</span><span class="w">         </span><span class="c1"># Descend two levels into child divisions (default: 1)</span>
+</code></pre></div>
+<p><strong>Sections run by <code>swarm heal</code>:</strong>
+1. <strong>Alignment</strong> — ascend (local ↔ parent) + descend (local ↔ children). Identifies orphaned items with no cross-division links.
+2. <strong>Queue Health</strong> — stale claims, blocked items, pending item count.
+3. <strong>Security Scan</strong> — same 18-pattern scan as <code>swarm audit --security</code>, covering all <code>.swarm/</code> files and platform shims.
+4. <strong>Pheromone Trail Integrity</strong> — HMAC-SHA256 re-verification of <code>trail.log</code>.
+5. <strong>Summary</strong> — total issues, memory.md log entry, remediation hint if <code>--fix</code> not used.</p>
+<p><strong>With <code>--fix</code>:</strong>
+- Copies flagged files to <code>.swarm/quarantine/&lt;timestamp&gt;_&lt;file&gt;.bak</code> for human forensic review. Does <strong>not</strong> auto-delete content — humans must excise injections.
+- Blocks HMAC fingerprints of tampered trail entries in <code>.swarm/blocked_peers.json</code>.
+- Run <code>swarm heal</code> again after cleaning to confirm resolution.</p>
+<h3 id="swarm-handoff"><code>swarm handoff</code><a class="headerlink" href="#swarm-handoff" title="Permanent link">&para;</a></h3>
+<p>Print a structured handoff note for the current session — what was done, what's in
+flight, what's next. Useful at the end of a work session.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>swarm<span class="w"> </span>handoff
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>swarm<span class="w"> </span>handoff<span class="w"> </span>--format<span class="w"> </span>json<span class="w">    </span><span class="c1"># machine-readable output</span>
+</code></pre></div>
+<hr />
+<h2 id="federation">Federation<a class="headerlink" href="#federation" title="Permanent link">&para;</a></h2>
+<p>OGP-lite cross-swarm federation — exchange work items and alignment signals between separate <code>.swarm/</code> hierarchies using signed intent messages. Trust is bilateral and explicit; there is no central registry.</p>
+<p><strong>Key design principles (from OGP build learnings):</strong>
+- Identity is always derived from a stored key fingerprint, never from a path or claimed header field.
+- Peer records are persisted <em>before</em> the trust operation returns (avoids the "addPeer lost on restart" bug).
+- Every inbound message passes through a three-layer doorman before any queue operation is executed.</p>
+<h3 id="swarm-federation-init"><code>swarm federation init</code><a class="headerlink" href="#swarm-federation-init" title="Permanent link">&para;</a></h3>
+<p>Create the <code>federation/</code> directory structure inside <code>.swarm/</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>swarm<span class="w"> </span>federation<span class="w"> </span>init
+</code></pre></div>
+<p>Creates: <code>federation/trusted_peers/</code>, <code>federation/inbox/</code>, <code>federation/outbox/</code>, <code>federation/policy.md</code>, <code>federation/exports.md</code>.</p>
+<h3 id="swarm-federation-export-id"><code>swarm federation export-id</code><a class="headerlink" href="#swarm-federation-export-id" title="Permanent link">&para;</a></h3>
+<p>Print this swarm's public identity — the file to share with federation peers out-of-band (email, Slack, git).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>swarm<span class="w"> </span>federation<span class="w"> </span>export-id<span class="w">              </span><span class="c1"># print to stdout</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>swarm<span class="w"> </span>federation<span class="w"> </span>export-id<span class="w"> </span>--out<span class="w"> </span>id.json<span class="w">  </span><span class="c1"># write to file</span>
+</code></pre></div>
+<p>This is safe to commit or share. The private <code>.signing_key</code> is never exposed.</p>
+<h3 id="swarm-federation-trust"><code>swarm federation trust</code><a class="headerlink" href="#swarm-federation-trust" title="Permanent link">&para;</a></h3>
+<p>Import a peer's identity file and establish bilateral trust.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>swarm<span class="w"> </span>federation<span class="w"> </span>trust<span class="w"> </span>peer_identity.json
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>swarm<span class="w"> </span>federation<span class="w"> </span>trust<span class="w"> </span>peer_identity.json<span class="w"> </span>--name<span class="w"> </span><span class="s2">&quot;Acme Corp&quot;</span><span class="w"> </span>--scopes<span class="w"> </span><span class="s2">&quot;work_request,alignment_signal&quot;</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--name NAME</code></td>
+<td>peer's swarm ID</td>
+<td>Human-readable label</td>
+</tr>
+<tr>
+<td><code>--scopes SCOPES</code></td>
+<td><code>work_request,alignment_signal</code></td>
+<td>Comma-separated list of permitted intents</td>
+</tr>
+</tbody>
+</table>
+<h3 id="swarm-federation-revoke"><code>swarm federation revoke</code><a class="headerlink" href="#swarm-federation-revoke" title="Permanent link">&para;</a></h3>
+<p>Remove a peer from trusted peers.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>swarm<span class="w"> </span>federation<span class="w"> </span>revoke<span class="w"> </span>&lt;fingerprint&gt;
+</code></pre></div>
+<h3 id="swarm-federation-peers"><code>swarm federation peers</code><a class="headerlink" href="#swarm-federation-peers" title="Permanent link">&para;</a></h3>
+<p>List all trusted federation peers and their permitted scopes.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>swarm<span class="w"> </span>federation<span class="w"> </span>peers
+</code></pre></div>
+<h3 id="swarm-federation-send"><code>swarm federation send</code><a class="headerlink" href="#swarm-federation-send" title="Permanent link">&para;</a></h3>
+<p>Create a signed outbound intent message in <code>outbox/</code>. Deliver the resulting file to the peer manually (git push, shared directory, email attachment).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>swarm<span class="w"> </span>federation<span class="w"> </span>send<span class="w"> </span>&lt;fingerprint&gt;<span class="w"> </span>work_request<span class="w"> </span>--desc<span class="w"> </span><span class="s2">&quot;Need help with OAuth2 token exchange&quot;</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>swarm<span class="w"> </span>federation<span class="w"> </span>send<span class="w"> </span>&lt;fingerprint&gt;<span class="w"> </span>alignment_signal<span class="w"> </span>--context<span class="w"> </span><span class="s2">&quot;Completed auth module&quot;</span>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>swarm<span class="w"> </span>federation<span class="w"> </span>send<span class="w"> </span>&lt;fingerprint&gt;<span class="w"> </span>capability_ad<span class="w"> </span>--context<span class="w"> </span><span class="s2">&quot;Available for API integration work&quot;</span>
+</code></pre></div>
+<p><strong>Intent types:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Intent</th>
+<th>Effect on peer</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>work_request</code></td>
+<td>Adds item to peer's queue</td>
+<td>Requires <code>work_request</code> scope</td>
+</tr>
+<tr>
+<td><code>alignment_signal</code></td>
+<td>Informational only</td>
+<td>No queue change at peer</td>
+</tr>
+<tr>
+<td><code>capability_ad</code></td>
+<td>Informational only</td>
+<td>Advertise what this swarm can do</td>
+</tr>
+</tbody>
+</table>
+<h3 id="swarm-federation-inbox"><code>swarm federation inbox</code><a class="headerlink" href="#swarm-federation-inbox" title="Permanent link">&para;</a></h3>
+<p>List received messages waiting in <code>inbox/</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>swarm<span class="w"> </span>federation<span class="w"> </span>inbox
+</code></pre></div>
+<h3 id="swarm-federation-apply"><code>swarm federation apply</code><a class="headerlink" href="#swarm-federation-apply" title="Permanent link">&para;</a></h3>
+<p>Apply a received inbox message to this swarm's queue after doorman enforcement.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>swarm<span class="w"> </span>federation<span class="w"> </span>apply<span class="w"> </span>inbox/20260406T1400Z_work_request_ab123456.json
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>swarm<span class="w"> </span>federation<span class="w"> </span>apply<span class="w"> </span>inbox/msg.json<span class="w"> </span>--yes<span class="w">   </span><span class="c1"># skip confirmation prompt</span>
+</code></pre></div>
+<p><strong>Doorman enforcement sequence</strong> (Layer 1 → 2 → 3):
+1. Parse the message and read <code>from_fingerprint</code> from the message body (never the claimed header)
+2. Layer 2: Is this fingerprint in <code>trusted_peers/</code>? Does their record permit this intent?
+3. Layer 1: Does <code>federation/policy.md</code> allow this intent globally?</p>
+<p>A <code>403</code>-equivalent reason is printed for any failure at any layer.</p>
+<h3 id="federation-policy">Federation Policy<a class="headerlink" href="#federation-policy" title="Permanent link">&para;</a></h3>
+<p><code>federation/policy.md</code> is Layer 1 of the scope model. To disable an intent globally:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>disabled: work_request
+</code></pre></div>
+<p>Per-peer scopes in <code>trusted_peers/&lt;fingerprint&gt;.json</code> are Layer 2. Both must pass for a message to be applied.</p>
+<h3 id="upgrade-path">Upgrade Path<a class="headerlink" href="#upgrade-path" title="Permanent link">&para;</a></h3>
+<p>The current implementation exchanges identity files out-of-band and signs messages with HMAC-SHA256 for local trail integrity. The natural upgrade path to full OGP:</p>
+<table>
+<thead>
+<tr>
+<th>Now (OGP-lite)</th>
+<th>Full OGP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Identity via <code>swarm federation export-id</code> (manual)</td>
+<td>Ed25519 public key, discoverable via DNS <code>_ogp.example.com</code> TXT record</td>
+</tr>
+<tr>
+<td>Transport: git push / shared dir / manual</td>
+<td>HTTP/gRPC OGP gateway</td>
+</tr>
+<tr>
+<td>HMAC-SHA256 local trail signing</td>
+<td>Ed25519 asymmetric signatures (peers can verify independently)</td>
+</tr>
+<tr>
+<td><code>trusted_peers/</code> files</td>
+<td>Bilateral gateway trust handshake</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="scheduling">Scheduling<a class="headerlink" href="#scheduling" title="Permanent link">&para;</a></h2>
+<p>Schedules are stored in <code>.swarm/schedules.md</code>. No daemon required — intended to be called from the system crontab or triggered manually.</p>
+<h3 id="swarm-schedule-list"><code>swarm schedule list</code><a class="headerlink" href="#swarm-schedule-list" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>swarm<span class="w"> </span>schedule<span class="w"> </span>list
+</code></pre></div>
+<h3 id="swarm-schedule-add"><code>swarm schedule add</code><a class="headerlink" href="#swarm-schedule-add" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>swarm<span class="w"> </span>schedule<span class="w"> </span>add<span class="w"> </span><span class="s1">&#39;0 */6 * * *&#39;</span><span class="w"> </span><span class="s1">&#39;swarm heal --fix&#39;</span><span class="w">             </span><span class="c1"># every 6 hours</span>
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>swarm<span class="w"> </span>schedule<span class="w"> </span>add<span class="w"> </span><span class="s1">&#39;6h&#39;</span><span class="w"> </span><span class="s1">&#39;swarm audit --security&#39;</span><span class="w"> </span>--name<span class="w"> </span><span class="s1">&#39;Security check&#39;</span>
+<a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a>swarm<span class="w"> </span>schedule<span class="w"> </span>add<span class="w"> </span><span class="s1">&#39;on:done CLD-042&#39;</span><span class="w"> </span><span class="s1">&#39;swarm ai &quot;claim CLD-043&quot;&#39;</span><span class="w">  </span><span class="c1"># event-driven</span>
+</code></pre></div>
+<p><strong>Schedule types:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Spec format</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cron</code></td>
+<td>5-field cron</td>
+<td><code>0 9 * * 1</code> (Mondays 9am)</td>
+</tr>
+<tr>
+<td><code>interval</code></td>
+<td><code>Nm</code> / <code>Nh</code> / <code>Nd</code></td>
+<td><code>30m</code>, <code>6h</code>, <code>2d</code></td>
+</tr>
+<tr>
+<td><code>on:done</code></td>
+<td><code>on:done ITEM-ID</code></td>
+<td><code>on:done CLD-042</code></td>
+</tr>
+<tr>
+<td><code>on:blocked</code></td>
+<td><code>on:blocked ITEM-ID</code></td>
+<td><code>on:blocked CLD-042</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="swarm-schedule-remove"><code>swarm schedule remove</code><a class="headerlink" href="#swarm-schedule-remove" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>swarm<span class="w"> </span>schedule<span class="w"> </span>remove<span class="w"> </span>SCHED-001
+</code></pre></div>
+<h3 id="swarm-schedule-run"><code>swarm schedule run</code><a class="headerlink" href="#swarm-schedule-run" title="Permanent link">&para;</a></h3>
+<p>Manually trigger a specific schedule regardless of due status.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>swarm<span class="w"> </span>schedule<span class="w"> </span>run<span class="w"> </span>SCHED-001
+</code></pre></div>
+<h3 id="swarm-schedule-run-due"><code>swarm schedule run-due</code><a class="headerlink" href="#swarm-schedule-run-due" title="Permanent link">&para;</a></h3>
+<p>Run all currently-due cron/interval schedules. Add to system crontab:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="c1"># In crontab (crontab -e):</span>
+<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>*<span class="w">  </span><span class="nb">cd</span><span class="w"> </span>/path/to/repo<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>swarm<span class="w"> </span>schedule<span class="w"> </span>run-due
+<a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a>
+<a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a><span class="c1"># Or manually:</span>
+<a id="__codelineno-28-5" name="__codelineno-28-5" href="#__codelineno-28-5"></a>swarm<span class="w"> </span>schedule<span class="w"> </span>run-due
+</code></pre></div>
+<hr />
+<h2 id="workflows">Workflows<a class="headerlink" href="#workflows" title="Permanent link">&para;</a></h2>
+<p>Workflows are markdown files in <code>.swarm/workflows/*.md</code> with a YAML frontmatter header. They define multi-step sequences of <code>swarm</code> commands or arbitrary shell commands.</p>
+<p><strong>Patterns</strong> (inspired by swarms.ai):
+- <strong><code>sequential</code></strong> — steps run in order; halts on first failure
+- <strong><code>concurrent</code></strong> — all steps run in parallel threads
+- <strong><code>conditional</code></strong> — steps have <code>if:</code> guards based on previous step results
+- <strong><code>mixture</code></strong> — concurrent with result aggregation (implement per-step <code>agent:</code> assignments)</p>
+<h3 id="swarm-workflow-create"><code>swarm workflow create</code><a class="headerlink" href="#swarm-workflow-create" title="Permanent link">&para;</a></h3>
+<p>Scaffold a new workflow file.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>swarm<span class="w"> </span>workflow<span class="w"> </span>create<span class="w"> </span>oauth2-flow<span class="w"> </span>--pattern<span class="w"> </span>sequential<span class="w"> </span>--trigger<span class="w"> </span><span class="s2">&quot;on:done CLD-041&quot;</span>
+<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>swarm<span class="w"> </span>workflow<span class="w"> </span>create<span class="w"> </span>weekly-report<span class="w"> </span>--pattern<span class="w"> </span>sequential<span class="w"> </span>--trigger<span class="w"> </span><span class="s2">&quot;0 9 * * 1&quot;</span>
+</code></pre></div>
+<p>Edit the generated <code>.swarm/workflows/&lt;name&gt;.md</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>---
+<a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>trigger: on:done CLD-041
+<a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a>pattern: sequential
+<a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a><span class="gu">description: OAuth2 integration sequence</span>
+<a id="__codelineno-30-5" name="__codelineno-30-5" href="#__codelineno-30-5"></a><span class="gu">---</span>
+<a id="__codelineno-30-6" name="__codelineno-30-6" href="#__codelineno-30-6"></a>
+<a id="__codelineno-30-7" name="__codelineno-30-7" href="#__codelineno-30-7"></a><span class="gu">## Steps</span>
+<a id="__codelineno-30-8" name="__codelineno-30-8" href="#__codelineno-30-8"></a>
+<a id="__codelineno-30-9" name="__codelineno-30-9" href="#__codelineno-30-9"></a><span class="k">1.</span> swarm claim CLD-042
+<a id="__codelineno-30-10" name="__codelineno-30-10" href="#__codelineno-30-10"></a>   agent: bedrock
+<a id="__codelineno-30-11" name="__codelineno-30-11" href="#__codelineno-30-11"></a>   timeout: 30
+<a id="__codelineno-30-12" name="__codelineno-30-12" href="#__codelineno-30-12"></a>
+<a id="__codelineno-30-13" name="__codelineno-30-13" href="#__codelineno-30-13"></a><span class="k">2.</span> swarm claim CLD-043
+<a id="__codelineno-30-14" name="__codelineno-30-14" href="#__codelineno-30-14"></a>   agent: claude
+<a id="__codelineno-30-15" name="__codelineno-30-15" href="#__codelineno-30-15"></a>   depends: CLD-042
+<a id="__codelineno-30-16" name="__codelineno-30-16" href="#__codelineno-30-16"></a>   timeout: 45
+<a id="__codelineno-30-17" name="__codelineno-30-17" href="#__codelineno-30-17"></a>   if: step1.ok
+<a id="__codelineno-30-18" name="__codelineno-30-18" href="#__codelineno-30-18"></a>
+<a id="__codelineno-30-19" name="__codelineno-30-19" href="#__codelineno-30-19"></a><span class="k">3.</span> swarm heal --fix
+<a id="__codelineno-30-20" name="__codelineno-30-20" href="#__codelineno-30-20"></a>   agent: auto
+<a id="__codelineno-30-21" name="__codelineno-30-21" href="#__codelineno-30-21"></a>   timeout: 5
+</code></pre></div>
+<h3 id="swarm-workflow-list"><code>swarm workflow list</code><a class="headerlink" href="#swarm-workflow-list" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>swarm<span class="w"> </span>workflow<span class="w"> </span>list
+</code></pre></div>
+<h3 id="swarm-workflow-show"><code>swarm workflow show</code><a class="headerlink" href="#swarm-workflow-show" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>swarm<span class="w"> </span>workflow<span class="w"> </span>show<span class="w"> </span>oauth2-flow
+</code></pre></div>
+<h3 id="swarm-workflow-run"><code>swarm workflow run</code><a class="headerlink" href="#swarm-workflow-run" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a>swarm<span class="w"> </span>workflow<span class="w"> </span>run<span class="w"> </span>oauth2-flow<span class="w">              </span><span class="c1"># confirm before running</span>
+<a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a>swarm<span class="w"> </span>workflow<span class="w"> </span>run<span class="w"> </span>oauth2-flow<span class="w"> </span>--dry-run<span class="w">    </span><span class="c1"># show steps, no execution</span>
+<a id="__codelineno-33-3" name="__codelineno-33-3" href="#__codelineno-33-3"></a>swarm<span class="w"> </span>workflow<span class="w"> </span>run<span class="w"> </span>oauth2-flow<span class="w"> </span>--yes<span class="w">        </span><span class="c1"># skip confirmation</span>
+</code></pre></div>
+<h3 id="swarm-workflow-status"><code>swarm workflow status</code><a class="headerlink" href="#swarm-workflow-status" title="Permanent link">&para;</a></h3>
+<p>Show last run result from <code>.swarm/workflow_runs.jsonl</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a>swarm<span class="w"> </span>workflow<span class="w"> </span>status<span class="w"> </span>oauth2-flow
+</code></pre></div>
+<hr />
+<h2 id="ai-interface">AI Interface<a class="headerlink" href="#ai-interface" title="Permanent link">&para;</a></h2>
+<h3 id="swarm-ai"><code>swarm ai</code><a class="headerlink" href="#swarm-ai" title="Permanent link">&para;</a></h3>
+<p>Translate a natural-language instruction into <code>.swarm/</code> operations using an LLM backend.
+Previews proposed changes before executing (unless <code>--yes</code>).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>swarm<span class="w"> </span>ai<span class="w"> </span><span class="s2">&quot;mark CLD-042 as done, merged the OAuth PR&quot;</span>
+<a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a>swarm<span class="w"> </span>ai<span class="w"> </span><span class="s2">&quot;what should I work on next?&quot;</span>
+<a id="__codelineno-35-3" name="__codelineno-35-3" href="#__codelineno-35-3"></a>swarm<span class="w"> </span>ai<span class="w"> </span><span class="s2">&quot;add three items for rate limiting: design, implement, test&quot;</span>
+<a id="__codelineno-35-4" name="__codelineno-35-4" href="#__codelineno-35-4"></a>swarm<span class="w"> </span>ai<span class="w"> </span><span class="s2">&quot;write a memory entry: chose NATS over Kafka for lower latency&quot;</span>
+<a id="__codelineno-35-5" name="__codelineno-35-5" href="#__codelineno-35-5"></a>swarm<span class="w"> </span>ai<span class="w"> </span><span class="s2">&quot;update focus to markets ASGI fix&quot;</span><span class="w"> </span>--yes
+<a id="__codelineno-35-6" name="__codelineno-35-6" href="#__codelineno-35-6"></a>
+<a id="__codelineno-35-7" name="__codelineno-35-7" href="#__codelineno-35-7"></a><span class="c1"># With a specific backend:</span>
+<a id="__codelineno-35-8" name="__codelineno-35-8" href="#__codelineno-35-8"></a>swarm<span class="w"> </span>ai<span class="w"> </span><span class="s2">&quot;summarise the queue&quot;</span><span class="w"> </span>--via<span class="w"> </span>claude
+<a id="__codelineno-35-9" name="__codelineno-35-9" href="#__codelineno-35-9"></a>swarm<span class="w"> </span>ai<span class="w"> </span><span class="s2">&quot;what needs doing?&quot;</span><span class="w"> </span>--via<span class="w"> </span>gemini
+<a id="__codelineno-35-10" name="__codelineno-35-10" href="#__codelineno-35-10"></a>swarm<span class="w"> </span>ai<span class="w"> </span><span class="s2">&quot;mark done&quot;</span><span class="w"> </span>--via<span class="w"> </span>bedrock<span class="w">      </span><span class="c1"># explicit Bedrock (default)</span>
+</code></pre></div>
+<p>Options: <code>--yes / -y</code>, <code>--agent TEXT</code>, <code>--limit INT</code> (context token budget), <code>--via [bedrock|claude|gemini|opencode]</code>, <code>--chain</code>, <code>--max-steps INT</code></p>
+<p><strong>Workflow chaining (<code>--chain</code>)</strong>:</p>
+<p>With <code>--chain</code>, the AI is re-invoked after each successful set of write operations using the refreshed <code>.swarm/</code> context. This continues until the AI returns no further write ops (work is complete) or <code>--max-steps</code> is reached.</p>
+<p>Each batch of chained operations is signed and recorded in <code>trail.log</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a>swarm<span class="w"> </span>ai<span class="w"> </span><span class="s2">&quot;run the OAuth2 workflow: discovery, token exchange, refresh&quot;</span><span class="w"> </span>--chain<span class="w"> </span>--yes
+<a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a>swarm<span class="w"> </span>ai<span class="w"> </span><span class="s2">&quot;implement auth, then markets, then geo modules&quot;</span><span class="w"> </span>--chain<span class="w"> </span>--max-steps<span class="w"> </span><span class="m">9</span><span class="w"> </span>--yes
+<a id="__codelineno-36-3" name="__codelineno-36-3" href="#__codelineno-36-3"></a>swarm<span class="w"> </span>ai<span class="w"> </span><span class="s2">&quot;process the full pending queue&quot;</span><span class="w"> </span>--chain<span class="w"> </span>--max-steps<span class="w"> </span><span class="m">20</span><span class="w"> </span>--yes
+</code></pre></div>
+<p>Use <code>--yes</code> with <code>--chain</code> for fully automated runs; omit it to confirm each step interactively.</p>
+<h3 id="swarm-session"><code>swarm session</code><a class="headerlink" href="#swarm-session" title="Permanent link">&para;</a></h3>
+<p>Launch an interactive LLM session in the division root, seeded with <code>.swarm/</code> context.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a>swarm<span class="w"> </span>session<span class="w">                          </span><span class="c1"># interactive, auto-detect CLI</span>
+<a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a>swarm<span class="w"> </span>session<span class="w"> </span>--with<span class="w"> </span>claude<span class="w">            </span><span class="c1"># prefer Claude Code</span>
+<a id="__codelineno-37-3" name="__codelineno-37-3" href="#__codelineno-37-3"></a>swarm<span class="w"> </span>session<span class="w"> </span>--with<span class="w"> </span>gemini<span class="w">            </span><span class="c1"># prefer Gemini CLI</span>
+<a id="__codelineno-37-4" name="__codelineno-37-4" href="#__codelineno-37-4"></a>swarm<span class="w"> </span>session<span class="w"> </span><span class="s2">&quot;what should I pick up?&quot;</span><span class="w"> </span><span class="c1"># single non-interactive turn</span>
+</code></pre></div>
+<p>For <strong>Claude Code</strong>: CLAUDE.md already loads <code>.swarm/</code> context automatically.
+For <strong>gemini / opencode</strong>: writes <code>.swarm/CURRENT_SESSION.md</code> context file first.</p>
+<h3 id="swarm-configure"><code>swarm configure</code><a class="headerlink" href="#swarm-configure" title="Permanent link">&para;</a></h3>
+<p>Interactive wizard to set your default LLM interface and (if Bedrock) model + region.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>swarm<span class="w"> </span>configure
+</code></pre></div>
+<p>Config stored at <code>~/.config/swarm/config.toml</code>. Credentials are never stored here —
+use <code>aws configure</code> or env vars for Bedrock; the respective CLI handles auth for others.</p>
+<hr />
+<h2 id="setup-ci">Setup &amp; CI<a class="headerlink" href="#setup-ci" title="Permanent link">&para;</a></h2>
+<h3 id="swarm-setup-drift-check"><code>swarm setup-drift-check</code><a class="headerlink" href="#swarm-setup-drift-check" title="Permanent link">&para;</a></h3>
+<p>Install the <code>swarm-drift-check.yml</code> GitHub Actions workflow into the current repo.
+Uses the <code>gh</code> CLI to set secrets if needed.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>swarm<span class="w"> </span>setup-drift-check<span class="w">           </span><span class="c1"># install workflow file only</span>
+<a id="__codelineno-39-2" name="__codelineno-39-2" href="#__codelineno-39-2"></a>swarm<span class="w"> </span>setup-drift-check<span class="w"> </span>--commit<span class="w">  </span><span class="c1"># also commit + push</span>
+</code></pre></div>
+<p>See <a href="../DRIFT_CHECK_SETUP/">Drift Check Setup</a> for AWS Bedrock prerequisites.</p>
+<hr />
+<h2 id="item-id-convention">Item ID Convention<a class="headerlink" href="#item-id-convention" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>&lt;DIVISION-CODE&gt;-&lt;3-digit-number&gt;
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Division</th>
+<th>Code</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Org level</td>
+<td><code>ORG</code></td>
+</tr>
+<tr>
+<td>oasis-cloud</td>
+<td><code>CLD</code></td>
+</tr>
+<tr>
+<td>oasis-cloud-admin</td>
+<td><code>ADM</code></td>
+</tr>
+<tr>
+<td>oasis-weather</td>
+<td><code>WTH</code></td>
+</tr>
+<tr>
+<td>oasis-firmware</td>
+<td><code>FW</code></td>
+</tr>
+<tr>
+<td>oasis-home</td>
+<td><code>HM</code></td>
+</tr>
+<tr>
+<td>oasis-ui</td>
+<td><code>UI</code></td>
+</tr>
+<tr>
+<td>oasis-forms</td>
+<td><code>FRM</code></td>
+</tr>
+<tr>
+<td>oasis-hardware</td>
+<td><code>HW</code></td>
+</tr>
+<tr>
+<td>oasis-welcome</td>
+<td><code>WEB</code></td>
+</tr>
+<tr>
+<td>oasis-cloud-wiki</td>
+<td><code>WIKI</code></td>
+</tr>
+<tr>
+<td>oasis-records</td>
+<td><code>REC</code></td>
+</tr>
+<tr>
+<td>swarm-city</td>
+<td><code>SWC</code></td>
+</tr>
+</tbody>
+</table>
+<p>IDs are assigned sequentially and never reused.</p>
+<hr />
+<h2 id="security-trust-model">Security &amp; Trust Model<a class="headerlink" href="#security-trust-model" title="Permanent link">&para;</a></h2>
+<h3 id="pheromone-trail-signing">Pheromone Trail Signing<a class="headerlink" href="#pheromone-trail-signing" title="Permanent link">&para;</a></h3>
+<p>Every <code>swarm init</code> generates a per-swarm HMAC-SHA256 signing identity:</p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Description</th>
+<th>Commit?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.swarm/identity.json</code></td>
+<td>Public fingerprint (swarm ID, algorithm, created)</td>
+<td>✅ Yes</td>
+</tr>
+<tr>
+<td><code>.swarm/.signing_key</code></td>
+<td>256-bit private HMAC key</td>
+<td>❌ No (.gitignored)</td>
+</tr>
+<tr>
+<td><code>.swarm/trail.log</code></td>
+<td>Append-only signed operation log</td>
+<td>❌ No (local only)</td>
+</tr>
+<tr>
+<td><code>.swarm/blocked_peers.json</code></td>
+<td>Blocked fingerprints</td>
+<td>✅ Optional</td>
+</tr>
+</tbody>
+</table>
+<p>Each <code>swarm ai</code> batch records a signed entry in <code>trail.log</code>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a><span class="p">{</span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="s2">&quot;2026-04-06T14:00Z&quot;</span><span class="p">,</span><span class="nt">&quot;swarm_id&quot;</span><span class="p">:</span><span class="s2">&quot;a1b2c3d4&quot;</span><span class="p">,</span><span class="nt">&quot;fingerprint&quot;</span><span class="p">:</span><span class="s2">&quot;f8e7d6c5&quot;</span><span class="p">,</span><span class="nt">&quot;agent_id&quot;</span><span class="p">:</span><span class="s2">&quot;cascade&quot;</span><span class="p">,</span><span class="nt">&quot;op&quot;</span><span class="p">:</span><span class="s2">&quot;ai_batch&quot;</span><span class="p">,</span><span class="nt">&quot;payload&quot;</span><span class="p">:{</span><span class="nt">&quot;step&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="nt">&quot;ops&quot;</span><span class="p">:[</span><span class="s2">&quot;done&quot;</span><span class="p">,</span><span class="s2">&quot;write_state&quot;</span><span class="p">]},</span><span class="nt">&quot;signature&quot;</span><span class="p">:</span><span class="s2">&quot;abc123...&quot;</span><span class="p">}</span>
+</code></pre></div></p>
+<p>To verify the trail: <code>swarm audit --trail</code> or <code>swarm heal</code>.
+To block a bad actor: <code>swarm heal --fix</code> (auto-blocks tampered fingerprints).</p>
+<h3 id="adversarial-content-detection">Adversarial Content Detection<a class="headerlink" href="#adversarial-content-detection" title="Permanent link">&para;</a></h3>
+<p><code>swarm heal</code> and <code>swarm audit --security</code> scan for 18 patterns across 3 severity levels:</p>
+<table>
+<thead>
+<tr>
+<th>Severity</th>
+<th>Categories</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>CRITICAL</strong></td>
+<td>PROMPT_INJECTION, INSTRUCTION_ERASURE, PERSONA_HIJACK, JAILBREAK, LLM_TEMPLATE_INJECTION, SAFETY_OVERRIDE</td>
+</tr>
+<tr>
+<td><strong>HIGH</strong></td>
+<td>NON_DISCLOSURE, CONTROL_CHARACTERS, PRIORITY_OVERRIDE</td>
+</tr>
+<tr>
+<td><strong>MEDIUM</strong></td>
+<td>HIDDEN_HTML_COMMENT, HIDDEN_MD_COMMENT, HTML_INJECTION, CODE_INJECTION</td>
+</tr>
+</tbody>
+</table>
+<p>Files scanned: <code>state.md</code>, <code>queue.md</code>, <code>memory.md</code>, <code>context.md</code>, <code>BOOTSTRAP.md</code>, <code>workflows/*.md</code>, <code>CLAUDE.md</code>, <code>.windsurfrules</code>, <code>.cursorrules</code>, <code>.github/copilot-instructions.md</code>.</p>
+<h3 id="swarmsai-integration">swarms.ai Integration<a class="headerlink" href="#swarmsai-integration" title="Permanent link">&para;</a></h3>
+<p>For multi-agent frameworks, use the built-in bridge:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">dot_swarm.swarms_provider</span><span class="w"> </span><span class="kn">import</span> <span class="n">DotSwarmStateProvider</span><span class="p">,</span> <span class="n">StigmergicSwarm</span>
+<a id="__codelineno-42-2" name="__codelineno-42-2" href="#__codelineno-42-2"></a>
+<a id="__codelineno-42-3" name="__codelineno-42-3" href="#__codelineno-42-3"></a><span class="c1"># Inject .swarm/ state into any agent&#39;s system prompt</span>
+<a id="__codelineno-42-4" name="__codelineno-42-4" href="#__codelineno-42-4"></a><span class="n">provider</span> <span class="o">=</span> <span class="n">DotSwarmStateProvider</span><span class="p">(</span><span class="n">swarm_path</span><span class="o">=</span><span class="s2">&quot;./.swarm&quot;</span><span class="p">)</span>
+<a id="__codelineno-42-5" name="__codelineno-42-5" href="#__codelineno-42-5"></a><span class="n">system_prompt</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">build_system_prompt</span><span class="p">(</span><span class="n">agent_name</span><span class="o">=</span><span class="s2">&quot;Coordinator&quot;</span><span class="p">)</span>
+<a id="__codelineno-42-6" name="__codelineno-42-6" href="#__codelineno-42-6"></a>
+<a id="__codelineno-42-7" name="__codelineno-42-7" href="#__codelineno-42-7"></a><span class="c1"># Read queue state</span>
+<a id="__codelineno-42-8" name="__codelineno-42-8" href="#__codelineno-42-8"></a><span class="n">queue</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">get_queue</span><span class="p">()</span>   <span class="c1"># {&quot;active&quot;: [...], &quot;pending&quot;: [...], &quot;done&quot;: [...]}</span>
+<a id="__codelineno-42-9" name="__codelineno-42-9" href="#__codelineno-42-9"></a>
+<a id="__codelineno-42-10" name="__codelineno-42-10" href="#__codelineno-42-10"></a><span class="c1"># Apply AI response operations back to .swarm/ files</span>
+<a id="__codelineno-42-11" name="__codelineno-42-11" href="#__codelineno-42-11"></a><span class="n">results</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">apply_operations</span><span class="p">(</span><span class="n">llm_response_json</span><span class="p">,</span> <span class="n">agent_id</span><span class="o">=</span><span class="s2">&quot;my-agent&quot;</span><span class="p">)</span>
+<a id="__codelineno-42-12" name="__codelineno-42-12" href="#__codelineno-42-12"></a>
+<a id="__codelineno-42-13" name="__codelineno-42-13" href="#__codelineno-42-13"></a><span class="c1"># Stigmergic multi-agent coordination (requires: pip install swarms)</span>
+<a id="__codelineno-42-14" name="__codelineno-42-14" href="#__codelineno-42-14"></a><span class="kn">from</span><span class="w"> </span><span class="nn">swarms</span><span class="w"> </span><span class="kn">import</span> <span class="n">Agent</span>
+<a id="__codelineno-42-15" name="__codelineno-42-15" href="#__codelineno-42-15"></a><span class="n">swarm</span> <span class="o">=</span> <span class="n">StigmergicSwarm</span><span class="p">(</span><span class="n">swarm_path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">agents</span><span class="o">=</span><span class="p">[</span><span class="n">agent1</span><span class="p">,</span> <span class="n">agent2</span><span class="p">],</span> <span class="n">max_rounds</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<a id="__codelineno-42-16" name="__codelineno-42-16" href="#__codelineno-42-16"></a><span class="n">results</span> <span class="o">=</span> <span class="n">swarm</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">&quot;Implement the OAuth2 integration&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>Agents coordinate <em>indirectly</em> through <code>.swarm/</code> files (stigmergic protocol) — no direct agent-to-agent message passing required. Full git audit trail maintained automatically.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
